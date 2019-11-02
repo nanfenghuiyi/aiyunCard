@@ -3,7 +3,7 @@
     <div class="header">登录账号</div>
     <div class="section-style">
       <div class="code">+86</div>
-      <input type="number" placeholder="请输出手机号码" v-model="phone">
+      <input type="number" placeholder="请输入手机号码" v-model="phone">
     </div>
     <div class="section-style">
       <div class="checkText">验证码</div>
@@ -17,7 +17,7 @@
     <div class="section-style">
       <div class="code padw">密码</div>
       <div class="inputImg">
-        <input :type="check.type" placeholder="请设置密码" v-model="pwd">
+        <input :type="check.type" placeholder="请输入密码" v-model="pwd">
         <div class="pwdShow" @click="changeCheck">
           <img :src="check.src" alt="">
         </div>
@@ -26,7 +26,7 @@
     <div class="forgetPwd" @click="errorClick">
       忘记密码？
     </div>
-    <div class="btn" @click="login">登陆</div>
+    <div class="btn" @click="login">登录</div>
   </div>
 </template>
 
@@ -70,10 +70,10 @@ export default {
       var obj={phone,pwd,captcha,token};
       this.axios.post(url,obj)
       .then(res=>{
-        console.log(res)
+        // console.log(res)
         var data=res.data;
         this.status=data.status;
-        console.log(data)
+        // console.log(data)
         var msg=data.msg
         if(data.status===1){
           // commit 方法 提交给 store 数据 将数据提交给缓存进行设置

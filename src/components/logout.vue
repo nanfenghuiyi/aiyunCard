@@ -26,10 +26,10 @@ export default {
       var url = this.$global_msg.logout;
       var user_id = JSON.parse(localStorage.getItem('user')).user.user_id;
       var obj={user_id}
-      console.log(user_id)
+      // console.log(user_id)
       this.axios.post(url,obj)
       .then(res=>{
-        console.log(res)
+        // console.log(res)
         // localStorage.removeItem(key)
         // window.localStorage.clear()
         this.$store.commit('_removeStorage','user')
