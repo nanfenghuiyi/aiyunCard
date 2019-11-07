@@ -25,11 +25,11 @@
       </div>
       <div class="uploadCard" @click="getAdd">
         <img src="../assets/home/tianjia.png" alt="">
-        上传名片
+        点击上传名片
       </div>
     </div>
     <div class="newsStyle">
-      <div class="newsStyle-border" :class="{textActive:dataActive==true}"  @click="allRecords">全部</div>
+      <div class="newsStyle-border" :class="{textActive:dataActive==true, flexActive:dataActive==true}"  @click="allRecords">全部</div>
       <!-- <div @click="newRecords">今天</div> -->
       <div :class="{textActive:dataActive==false}" @click="dataPopup" v-text="checkDate"></div>
     </div>
@@ -107,9 +107,9 @@
 </template>
 
 <script>
-import login from "../components/Login";
-import error from "../components/error";
-import logout from "../components/logout";
+import login from '../components/Login';
+import error from '../components/error';
+import logout from '../components/logout';
 
 export default {
   inject: ['reload'],
@@ -131,15 +131,14 @@ export default {
       user_id:'',
       addList: [], // 数据列表
       newList: [], // 今日数据
-      addListNum: 0, //总张数
-      img:'', // 图片查看地址
+      addListNum: 0, // 总张数
       newCheck: false,
       loading: false,
       listNum: '',
       checkDate: '筛选',
       currentDate: new Date(),
-      minDate: new Date(2019,0,1),
-      maxDate: new Date((new Date()).getFullYear(),12,30),
+      minDate: new Date(2019,0,1), // 最小时间
+      maxDate: new Date((new Date()).getFullYear(),12,30), // 最大时间
       check: true,
       year:'',
       month:'',
@@ -154,14 +153,6 @@ export default {
     login,
     error,
     logout
-  },
-  computed: {
-    noMore () {
-      return this.addList.length >= this.addListNum
-    },
-    disabled () {
-      return this.loading || this.noMore
-    }
   },
   methods: {
     getAdd() {
@@ -183,12 +174,6 @@ export default {
         }
       }, 2000)
     },
-    /* showPopup(e) {
-      // console.log(e)
-      this.img=e.path
-      this.show = true;
-      this.bigShow = true
-    }, */
     loginPopup() {
       this.loginShow = true;
     },
@@ -261,9 +246,9 @@ export default {
     },
     // 时间确定
     thisData() {
-      // console.log("确认时间")
+      // console.log('确认时间')
       this.newRecords()
-      this.checkDate = this.start+"至"+this.end
+      this.checkDate = this.start+'至'+this.end
       this.dataShow = false
     },
     // 取消时间选择
@@ -290,7 +275,7 @@ export default {
     records(){
       this.loginStatus = JSON.parse(localStorage.getItem('user')).user.info;
       var phone=JSON.parse(localStorage.getItem('user')).user.phone;
-      this.title2 = phone.replace(/(\d{3})\d{4}(\d{4})/,"$1****$2")
+      this.title2 = phone.replace(/(\d{3})\d{4}(\d{4})/,'$1****$2')
       var url=this.$global_msg.records;
       var user_id=JSON.parse(localStorage.getItem('user')).user.user_id
       var page = this.page;
@@ -341,13 +326,21 @@ export default {
       })
     }
   },
+  computed: {
+    noMore () {
+      return this.addList.length >= this.addListNum
+    },
+    disabled () {
+      return this.loading || this.noMore
+    }
+  },
   created () {
     // console.log(JSON.parse(localStorage.getItem('user')))
     if (JSON.parse(localStorage.getItem('user'))!=null) {
       this.records()
     };
     this.data();
-    // this.checkDate=this.start+"至"+this.start
+    // this.checkDate=this.start+'至'+this.start
   },
 }
 </script>
@@ -376,7 +369,7 @@ export default {
   left: 20px;
   top: 21px;
   display: flex;
-  flex-direction:column
+  flex-direction:column;
 }
 .loginImg{
   display: flex;
@@ -444,15 +437,15 @@ export default {
   color:rgba(151,151,151,1);
   line-height:20px;
 }
-.newsStyle div:first-child{
-  flex: 0.5 !important
+.flexActive{
+  flex: 0.5 !important;
 }
 .textActive{
-  color: rgba(18,165,137,1) !important
+  color: rgba(18,165,137,1) !important;
 }
 
 .newsStyle-border{
-  border-right: 1px solid #979797
+  border-right: 1px solid #979797;
 }
 .imgNews{
   overflow: auto;
@@ -520,7 +513,7 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center
+  align-items: center;
 }
 .bigImg img{
   width: 100%;
@@ -546,6 +539,12 @@ export default {
 </style>
 
 <style>
+/* 
+***
+***所有组件样式修改
+***
+ */
+/* 弹出框 */
 .van-popup--center.van-popup--round {
   border-radius: 6px !important;
 }
@@ -553,5 +552,10 @@ export default {
   /* padding: 0 2rem !important; */
   flex: 1;
   font-size: 0.5rem !important;
+}
+
+/* 图片查看器 */
+.viewer-toolbar .viewer-one-to-one,.viewer-prev,.viewer-next,.viewer-play,.viewer-flip-horizontal,.viewer-flip-vertical{
+  display: none !important;
 }
 </style>

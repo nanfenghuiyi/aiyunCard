@@ -33,7 +33,7 @@ html, body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input,
   padding: 0;
 }
 li{
-  list-style: none
+  list-style: none;
 }
 body{
   font-family:PingFangSC-Regular,PingFang SC;

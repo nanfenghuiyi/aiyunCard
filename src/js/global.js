@@ -20,11 +20,21 @@ const captcha ='/Web/ThirdUploader/captcha'
 const fileUpload ='/Tool/upload'
 // { user_id, base64, type = 10 }
 
+// 当前地址
+let baseUrl = ''
+
+if (window.location.host == 'card.a56999.com') {
+  baseUrl = 'https://aybapi.a56999.com'
+} else {
+  baseUrl = 'http://118.190.203.67:8080'
+}
+
 export default {
   login,
   logout,
   records,
   upload,
   captcha,
-  fileUpload
+  fileUpload,
+  baseUrl
 }

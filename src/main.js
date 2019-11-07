@@ -23,9 +23,21 @@ Vue.use(Viewer)
 
 // 或者添加VueLazyload 选项
 Vue.use(VueLazyload, {
-  loading: "/src/assets/loading.png"
+  loading: "/loading.png"
 })
 
+Vue.use(Viewer, {
+  defaultOptions: {
+    zoomIn: 1,
+    zoomOut: 1,
+    reset: 1,
+    prev: 0,
+    play: 0,
+    next: 0,
+    rotateLeft: 1,
+    rotateRight: 1
+  }
+})
 
 Vue.config.productionTip = false
 Vue.prototype.$global_msg = global_msg

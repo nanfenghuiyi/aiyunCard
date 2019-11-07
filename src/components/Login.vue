@@ -154,7 +154,7 @@ input{
   box-sizing: border-box;
 }
 .padw{
-  border-right: none
+  border-right: none;
 }
 .btn{
   width: 300px;

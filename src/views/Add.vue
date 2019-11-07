@@ -13,17 +13,27 @@
     </div>
     <div class="section">
       <el-upload
-        action="http://118.190.203.67:8080"
+        action=this.$global_msg.baseUrl
         list-type="picture-card"
         multiple
+        accept="image/*"
+        :on-success="handleSuccess"
+        :on-progress='uploaded'
         :limit="10"
         :http-request="uploadImg"
         :auto-upload="true"
       >
-        <i class="el-icon-plus"></i>
+        <i class="el-icon-plus">
+          <div class="el-icon-plus-size">选择名片</div>
+        </i>
       </el-upload>
+      <div class="imgList" v-for="(item,index) in urlList" :key="index">
+        <div class="box" v-if="item.uid == uid">
+          <el-progress type="circle" :percentage="uploadPercent"></el-progress>
+        </div>
+        <img v-if="item.percentage == 100" :src="item.url" alt="">
+      </div>
     </div>
-    
   </div>
 </template>
 
@@ -39,11 +49,24 @@ export default {
       type: 10,
       city_code: "028",
       paths: "",
-      percentage: 0,
-      fullscreenLoading: false
+      uploadPercent: 0,
+      fullscreenLoading: false,
+      urlList:'',  //图片List
+      uid:null,    //图片唯一的标识id
     };
   },
   methods: {
+    handleSuccess(response, file, fileList){
+      // this.uploadPercent=100/
+      // this.uid = 1 //随便一个值,上传成功时,进度条消失
+      // console.log("图片上传成功")
+      // console.log(response)
+      // console.log(file)
+    },
+    uploaded(event, file, fileList){
+      this.urlList = fileList
+      this.uid = file.uid
+    },
     goBack() {
       this.$router.go(-1);
     },
@@ -54,8 +77,8 @@ export default {
       var city_code = this.city_code;
       var url = this.$global_msg.upload;
       var obj = { user_id, paths, city_code };
-      // console.log(this.percentage)
-      if (this.percentage == 100) {
+      // console.log(this.uploadPercent)
+      if (this.uploadPercent == 100) {
         this.axios.post(url, obj).then(res => {
           // console.log(res);
           var msg = res.data.msg;
@@ -67,7 +90,7 @@ export default {
             this.reload();
           }, 2000);
         })
-      } else if(this.percentage == 0){
+      } else if(this.uploadPercent == 0){
         this.$toast("请选择图片");
       }else{
         this.$toast("图片正在上传，请稍后");
@@ -157,7 +180,8 @@ export default {
                 );
                 // progressEvent.loaded 上传到服务器多少size
                 // progressEvent.total 图片总的大小
-                that.percentage = val;
+                that.uploadPercent = val;
+                // options.onProgress(val)
               }
             }
           };
@@ -265,12 +289,16 @@ export default {
 .el-upload--picture-card {
   height: 100px !important;
   width: 100px !important;
-  line-height: 110px !important;
+  /* line-height: 110px !important; */
   margin: 9px !important;
 }
 .el-upload-list--picture-card .el-upload-list__item {
   height: 100px !important;
   width: 100px !important;
   margin: 9px !important;
+}
+.el-icon-plus .el-icon-plus-size{
+  font-size: 14px;
+  display: block;
 }
 </style>
