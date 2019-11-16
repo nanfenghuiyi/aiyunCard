@@ -213,6 +213,10 @@ export default {
     window.onresize = function temp() {
       that.styleObject.height = `${document.documentElement.clientWidth*0.4}px`;
     };
+    if (JSON.parse(localStorage.getItem("user")) != null) {
+    }else {
+      this.$router.push({path: '/'})
+    };
   }
 };
 </script>

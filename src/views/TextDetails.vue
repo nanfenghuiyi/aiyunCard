@@ -389,6 +389,12 @@ export default {
       this.records();
     }
     this.data();
+  },
+  mounted() {
+    if (JSON.parse(localStorage.getItem("user")) != null) {
+    }else {
+      this.$router.push({path: '/'})
+    }
   }
 };
 </script>

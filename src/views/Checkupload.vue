@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div class="header">
-      <i @click="goBack"></i>
       <div>信息上传</div>
     </div>
     <div class="loginImg" @click="isLogin">
@@ -38,9 +37,6 @@ export default {
   watch: {},
   computed: {},
   methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
     goAddCard() {
       if (JSON.parse(localStorage.getItem("user")) != null) {
         this.$router.push({ path: "/CardDetails" });
@@ -77,6 +73,10 @@ export default {
       var phone = JSON.parse(localStorage.getItem("user")).user.phone;
       this.title = phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
     }
+    if (JSON.parse(localStorage.getItem("user")) != null) {
+    }else {
+      this.$router.push({path: '/'})
+    }
   }
 }
 </script>
@@ -92,14 +92,6 @@ export default {
   color: rgba(51, 51, 51, 1);
   display: flex;
   margin: 0 auto;
-}
-.header i {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 40px;
-  background: url("../assets/add/left.png") center no-repeat;
 }
 .header div {
   flex: 1;

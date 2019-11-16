@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class="showBanner?'container-active':''">
     <div class="header">
       <i @click="goBack"></i>
       <div>路线上传</div>
@@ -97,22 +97,22 @@
         <ul>
           <li class="section-car" @click="setStart">
             <div>起点</div>
-            <div>
-              <span class="span-style" v-text="checkStart"></span>
+            <div class="section-car-style">
+              <span class="span-style car-style" v-text="checkStart"></span>
               <i class="el-icon-arrow-down"></i>
             </div>
           </li>
           <li class="section-car" @click="setEnd">
             <div>终点</div>
-            <div>
-              <span class="span-style" v-text="checkEnd"></span>
+            <div class="section-car-style">
+              <span class="span-style car-style" v-text="checkEnd"></span>
               <i class="el-icon-arrow-down"></i>
             </div>
           </li>
           <li class="section-car" @click="setVia">
             <div>途径点</div>
-            <div>
-              <span class="span-style" v-text="checkVia"></span>
+            <div class="section-car-style">
+              <span class="span-style car-style" v-text="checkVia"></span>
               <i class="el-icon-arrow-down"></i>
             </div>
           </li>
@@ -180,7 +180,7 @@
       </van-popup>
     </div>
     <!-- 选择终点 -->
-    <div>
+    <div style="overflow-y:scroll;padding-bootom:20px">
       <van-popup
         v-model="endProvincesShow"
         position="right"
@@ -227,7 +227,7 @@
     <div>
       <van-popup
           v-model="mapShow"
-          position="right"
+          position="bottom"
           :style="{ height: '80%',width: '100%' }"
         >
           <div class="test">
@@ -258,6 +258,7 @@ export default {
   inject: ["reload"],
   data() {
     return {
+      showBanner: true,
       phone: "",
       line_type: 0,
       start_time: "",
@@ -455,6 +456,7 @@ export default {
       });
     },
     startCities(e, c) {
+      this.showBanner = false;
       this.startCity = e;
       this.startCode = c;
       // this.checkStart = this.pro_code + "-" + this.startCity;
@@ -508,11 +510,13 @@ export default {
     },
     // 设置途经点
     setVia() {
+      // this.i = 0;
       this.viaProvincesShow = true;
       this.getTheProvinces();
       this.type = 2
     },
     viaProvinces(e) {
+      // console.log(111)
       this.getViaCitiesShow = true;
       this.viaProvincesShow = false;
       this.viaProvince = e;
@@ -560,6 +564,7 @@ export default {
     },
     // 地址选择
     checkDetails(item) {
+      this.showBanner = false;
       console.log(item)
       var data = {};
       data.province = this.province;
@@ -671,8 +676,8 @@ export default {
         return;
       }
       if (this.pass_points.length > 0) {
-        for(var i in this.pass_points) {
-          this.points.push(this.pass_points[i]);
+        for(var index in this.pass_points) {
+          this.points.push(this.pass_points[index]);
         }
       } 
       if (this.end != null) {
@@ -682,7 +687,7 @@ export default {
         this.$toast("终点不能为空");
         return;
       }
-      this.getDriving(this.points, this.i);
+      this.getDriving(this.points, 0);
     },
 
     // 提交信息
@@ -729,6 +734,7 @@ export default {
     },
     // 路线规划
     getDriving(points, i) {
+      // i=this.i
       this.fullscreenLoading = true;
       // console.log(points.length);
       console.log(i);
@@ -748,10 +754,12 @@ export default {
             that.intervals.push(result.routes[0].distance)
             that.spaces.push(result.routes[0].time)
             that.getDriving(points, i+1);
+          }else{
+            this.$toast('路线规划失败，请稍后再试')
           }
         });
       } else {
-        this.i = 0;
+        // this.i = 0;
         this.uplaodClick();
       }
     },
@@ -779,7 +787,10 @@ export default {
     AMap.plugin("AMap.Driving", function() {})
     AMap.plugin("AMap.Autocomplete", function() {})
     this.getSerachAddress()
-    
+    if (JSON.parse(localStorage.getItem("user")) != null) {
+    }else {
+      this.$router.push({path: '/'})
+    }
     // this.query=this.$route.query
   }
 };
@@ -798,11 +809,16 @@ input {
   border: none;
 }
 .container {
+  position: fixed; 
   width: 375px;
   /* height: 667px; */
-  position: relative;
+  /* position: relative; */
   left: 50%;
   transform: translateX(-50%);
+  overflow: hidden;
+}
+.container-active{
+  overflow: hidden;
 }
 .header {
   position: relative;
@@ -864,14 +880,25 @@ input {
 .span-style {
   margin-right: 5px;
 }
+.section-car-style{
+  display: flex;
+}
+.car-style{
+  display: block;
+  text-align: right;
+  width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 /* 地图 */
 #myPageTop {
   margin-top: 20px;
 }
 .section-list{
-  width: 375px;
-  height: 600px;
-  overflow: auto;
+  width: 100%;
+  height: 400px;
+  overflow-y: scroll;
   z-index: 999;
   margin-top: 20px;
   border-top: 1px solid #eee;
@@ -889,5 +916,6 @@ input {
 <style>
 element.style {
   display: none !important;
+  overflow-y:scroll !important;
 }
 </style>
