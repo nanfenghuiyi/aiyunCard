@@ -360,7 +360,7 @@ export default {
         console.log(data);
         this.full_plate = data.full_plate;
         this.is_flow = data.is_flow==2?'流水班次':'固定班次';
-        this.start_time = data.start_name;
+        this.start_time = data.start_time;
         this.end_time = data.end_time;
         // var s= new Date(data.period*1000);
 
@@ -369,7 +369,7 @@ export default {
         for (var name of data.pass_points) {
           this.pass_points_name=this.pass_points_name+'-'+name.pass_name
         };
-        this.dest_name = data.end_time;
+        this.dest_name = data.end_name;
         this.phone = data.phone!=null?data.phone:'无';
         console.log(this.phone)
       })
