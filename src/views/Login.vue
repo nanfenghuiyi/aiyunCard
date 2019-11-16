@@ -143,7 +143,6 @@ input{
   width:375px;
   height:667px;
   background:rgba(255,255,255,1);
-  background: red;
   margin: 0 auto;
 }
 .header {
