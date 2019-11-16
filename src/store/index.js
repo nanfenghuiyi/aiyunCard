@@ -8,11 +8,23 @@ const store = new Vuex.Store({
   // 要存的初始数据
   state: {
     user: null,
-    cartProducts: []
+    cartProducts: [],
+    startDot:null,
+    endDot:null,
+    viaDot:null,
   },
   // 通过 mutations修改数据
   mutations: {
     // 设置数据 进入 localStorage
+    startPoint(state,value){
+      state.startDot = value
+    },
+    endPoint(state,value){
+      state.ndDot = value
+    },
+    viaPoint(state,value){
+      state.viaDot = value
+    },
     _setStorage(state, value) {
       state.user = value
       localStorage.setItem(key, JSON.stringify(value))  // localStroage.setItem(key,数据值) 设置存入缓存

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="header" v-text="title2"></div>
+    <div class="header" v-text="title"></div>
     <div class="section">
       <div class="btn btnActive" @click="logoutClick">退出登录</div>
       <div class="btn" @click="cancelClick">取消</div>
@@ -17,7 +17,7 @@ export default {
         logoutShow: false
       },
       cancelMessage: false,
-      title2:""
+      title:""
     }
   },
   methods: {
@@ -29,11 +29,20 @@ export default {
       // console.log(user_id)
       this.axios.post(url,obj)
       .then(res=>{
-        // console.log(res)
-        // localStorage.removeItem(key)
-        // window.localStorage.clear()
-        this.$store.commit('_removeStorage','user')
-        this.reload()
+        console.log(res)
+        var data = res.data;
+        this.$store.commit('_removeStorage','user');
+        if(res.status==200 && data.status==1){
+          setTimeout(() => {
+            this.$toast(data.msg)
+            this.reload()
+          }, 2000);
+        }else{
+          setTimeout(() => {
+            this.$toast(data.msg)
+            this.reload()
+          }, 2000);
+        }
       })
     },
     cancelClick() {
@@ -42,7 +51,7 @@ export default {
   },
   created () {
     var phone=JSON.parse(localStorage.getItem('user')).user.phone;
-    this.title2 = phone.replace(/(\d{3})\d{4}(\d{4})/,"$1****$2")
+    this.title = phone.replace(/(\d{3})\d{4}(\d{4})/,"$1****$2")
   }
 }
 </script>

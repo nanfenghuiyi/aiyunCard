@@ -246,8 +246,6 @@ export default {
 }
 .busText div {
   flex: 1;
-}
-.busText div {
   text-align: center;
 }
 .section {

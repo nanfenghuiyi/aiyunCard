@@ -2,7 +2,7 @@
   <div class="container">
     <div class="header">
       <i @click="goBack"></i>
-      <div>名片上传</div>
+      <div>信息上传</div>
     </div>
     <div class="section-header">登录账号</div>
     <div class="section-style">
@@ -31,11 +31,18 @@
       忘记密码？
     </div>
     <div class="btn" @click="login">登录</div>
+    <!-- 找回密码 -->
+    <div class="section-error">
+      <van-popup style="width:100%; height:40%" v-model="errorShow">
+        <error></error>
+      </van-popup>
+    </div>
   </div>
 </template>
 
 <script>
 import Vue from "vue"
+import error from "../components/error"
 
 export default {
   inject: ['reload'],
@@ -44,6 +51,7 @@ export default {
       phone:'',
       captcha:'',
       pwd:'',
+      errorShow: false,
       imgCode: '',//验证码地址
       token:'',//验证码token
       user_id:'',//登录token
@@ -56,7 +64,11 @@ export default {
       errorMessage: {loginShow: false,errorShow: true,}
     }
   },
+  components:{error},
   methods: {
+    goBack() {
+      this.$router.go(-1);
+    },
     login() {
       // this.$emit('loginChildFn', this.message);
       var phone = this.phone;
@@ -82,7 +94,8 @@ export default {
         if(data.status===1){
           // commit 方法 提交给 store 数据 将数据提交给缓存进行设置
           this.$store.commit('_setStorage',{user:{user_id:data.data.user_id,info:false,phone:this.phone}})
-          this.reload()
+          this.$router.push({ path: "/" });
+          this.$toast(msg)
         }else{
           this.$toast(msg);
         }
@@ -103,8 +116,10 @@ export default {
       })
     },
     errorClick() {
-      this.$emit('errorChildFn', this.errorMessage);
-    }
+      this.errorShow = true;
+      // this.$emit('errorChildFn', this.errorMessage);
+    },
+    
   },
   created () {
     this.changeImgCode()
@@ -114,6 +129,7 @@ export default {
 </script>
 
 <style scoped>
+
 input{
   width: 80%;
   border: none;
@@ -124,10 +140,10 @@ input{
   color:rgba(153,153,153,1);
 }
 .container{
-  width:350px;
-  height:406px;
+  width:375px;
+  height:667px;
   background:rgba(255,255,255,1);
-  border-radius:6px;
+  background: red;
   margin: 0 auto;
 }
 .header {
@@ -154,7 +170,7 @@ input{
   text-align: center;
 }
 .section-header{
-  padding: 30px 0;
+  padding: 108px 0 30px 0;
   font-size:18px;
   font-family:PingFangSC-Medium,PingFang SC;
   font-weight:500;
@@ -228,5 +244,11 @@ input{
   margin-right: 25px;
   font-size:14px;
   color:rgba(153,153,153,1);
+}
+</style>
+
+<style>
+body{
+  background: #fff;
 }
 </style>

@@ -23,6 +23,19 @@ const fileUpload ='/Tool/upload'
 // 当前地址
 let baseUrl = ''
 
+// 省获取
+const getProvinces = "/Tool/getProvinces"
+const getCities = "/Tool/getCities"
+
+// 路线详情
+const detail = 'web/ThirdReportBusLine/detail'
+
+// 上报的记录
+const lineRecords= 'web/ThirdReportBusLine/records'
+
+
+
+
 if (window.location.host == 'card.a56999.com') {
   baseUrl = 'https://aybapi.a56999.com'
 } else {
@@ -36,5 +49,9 @@ export default {
   upload,
   captcha,
   fileUpload,
-  baseUrl
+  baseUrl,
+  getProvinces,
+  getCities,
+  detail,
+  lineRecords
 }
