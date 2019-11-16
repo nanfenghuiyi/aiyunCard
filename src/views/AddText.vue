@@ -228,7 +228,7 @@
       <van-popup
           v-model="mapShow"
           position="bottom"
-          :style="{ height: '80%',width: '100%' }"
+          :style="{ height: '90%',width: '100%' }"
         >
           <div class="test">
             <div id="container"></div>
@@ -809,10 +809,10 @@ input {
   border: none;
 }
 .container {
-  position: fixed; 
+  /* position: fixed;  */
   width: 375px;
   /* height: 667px; */
-  /* position: relative; */
+  position: relative;
   left: 50%;
   transform: translateX(-50%);
   overflow: hidden;
@@ -897,7 +897,7 @@ input {
 }
 .section-list{
   width: 100%;
-  height: 400px;
+  height: 500px;
   overflow-y: scroll;
   z-index: 999;
   margin-top: 20px;
