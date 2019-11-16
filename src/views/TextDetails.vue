@@ -358,18 +358,21 @@ export default {
         // console.log(res)
         var data = res.data.data;
         console.log(data);
-        this.full_plate = data.full_plate;
+        this.full_plate = data.full_plate!=''?data.full_plate:'无';
         this.is_flow = data.is_flow==2?'流水班次':'固定班次';
         this.start_time = data.start_time;
         this.end_time = data.end_time;
         // var s= new Date(data.period*1000);
-
         this.period = (new Date(data.period*1000) % (1000 * 60 * 60)) / (1000 * 60)+'分钟';
         this.start_name = data.start_name;
-        for (var name of data.pass_points) {
-          this.pass_points_name=this.pass_points_name+'-'+name.pass_name
-        };
-        this.dest_name = data.end_name;
+        if(data.pass_points.length!=1){
+          for (var name of data.pass_points) {
+            this.pass_points_name=this.pass_points_name+'-'+name.pass_name
+          };
+        }else{
+          this.pass_points_name = data.pass_points[0].pass_name
+        }
+        this.dest_name = data.dest_name;
         this.phone = data.phone!=null?data.phone:'无';
         console.log(this.phone)
       })

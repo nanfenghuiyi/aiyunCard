@@ -687,13 +687,22 @@ export default {
         this.$toast("终点不能为空");
         return;
       }
-      this.getDriving(this.points, 0);
+      if (this.phone != '') {
+        this.getDriving(this.points, 0);
+      } else {
+        //提示
+        this.$toast("电话不能为空");
+        this.points.splice(0,this.points.length)
+        console.log(this.points)
+        return;
+      }
+      
     },
 
     // 提交信息
     uplaodClick() {
+      var that = this;
       // var user_id = JSON.parse(localStorage.getItem("user_id"));
-      
       var uplaodObj = {
         user_id: JSON.parse(localStorage.getItem("user")).user.user_id,
         line_type: this.line_type,
@@ -727,7 +736,12 @@ export default {
         }else{
           setTimeout(() => {
             this.fullscreenLoading = false;
+            that.spaces = new Array();
+            that.intervals = new Array();
+            // console.log(that.spaces)
+            // console.log(that.intervals)
             this.$toast(data.msg)
+            console.log('测试',1111)
           }, 2000);
         }
       })
@@ -740,7 +754,7 @@ export default {
       console.log(i);
       var that=this
       if (i != points.length - 1) {
-        console.log("111111", points);
+        console.log("111111", points,points.length);
         var driving = new AMap.Driving({
           // 驾车路线规划策略，AMap.DrivingPolicy.LEAST_TIME是最快捷模式
           policy: AMap.DrivingPolicy.LEAST_TIME
@@ -751,14 +765,25 @@ export default {
           // 未出错时，result即是对应的路线规划方案
           console.log(result);
           if(result.routes.length>0){
+            // if (this.intervals!=null) {
+              
+            // }else{}
             that.intervals.push(result.routes[0].distance)
             that.spaces.push(result.routes[0].time)
             that.getDriving(points, i+1);
+            // if(i>=points.length-2){
+            //   that.intervals=that.intervals.slice(0,i)
+            //   that.spaces=that.spaces.slice(0,i)
+              console.log(that.intervals)
+              console.log(that.spaces)
+            // }
           }else{
             this.$toast('路线规划失败，请稍后再试')
           }
         });
       } else {
+        console.log(that.intervals)
+        console.log(that.spaces)
         // this.i = 0;
         this.uplaodClick();
       }
