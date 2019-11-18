@@ -123,7 +123,7 @@
         <ul>
           <li class="section-car">
             <div>随车电话</div>
-            <input type="text" v-model="phone" placeholder="输入可联系到的随车号码" />
+            <input type="text" v-model="phone" maxlength="11" placeholder="输入可联系到的随车号码" />
           </li>
         </ul>
       </div>
@@ -338,7 +338,8 @@ export default {
       query: '',
       data:'',
       fullscreenLoading: false, // 加载中
-      i: 0,
+      // tab切换
+      // lineMessage: '',
     };
   },
   methods: {
@@ -406,7 +407,10 @@ export default {
         this.end_time = (new Date((year+ '/' + month + '/' + day + ' ' + value + ":00")).getTime())/1000;
         this.goEndTime = value;
       }else if(this.timeNum==4){
-        this.period = (new Date((year+ '/' + month + '/' + day + ' ' + value + ":00")).getTime())/1000;
+        var arr = value.split(':')
+        this.period = parseInt(arr[0] * 60) + parseInt(arr[1])
+        console.log(this.period)
+        // this.period = (new Date((year+ '/' + month + '/' + day + ' ' + value + ":00")).getTime())/1000;
         this.goViaTime = value;
       }
         this.timeShow = false;
@@ -436,31 +440,41 @@ export default {
     },
     startProvinces(e,c) {
       this.getCities = [];
-      // console.log(e)
-      // console.log(c)
+      console.log(e)
+      console.log(c)
       this.getCitiesShow = true;
+      this.startProvince =  e;
       this.pro_code = c;
       var url = this.$global_msg.getCities;
       var obj = { pro_code: c };
       this.axios.post(url, obj).then(res => {
         var data = res.data;
-        // console.log(data);
+        console.log(data);
         if(data.status==0 && data.data == null) {
-          var i = {};
-          i.city=e;
+          var i = {city:e};
           this.getCities = this.getCities.concat(i);
         }else{
-          this.getCities = data.data;
+          // this.getCities = data.data;
+          // 直辖市限制
+          console.log(data.data[0].code)
+          if (data.data.length<3) {
+            var i = {city:e ,code:data.data[0].code};
+            this.getCities = this.getCities.concat(i);
+          }else{
+            this.getCities = data.data;
+          }
         }
       });
     },
     startCities(e, c) {
+      console.log('startCities====',e)
+      console.log('startCities===',c)
       this.showBanner = false;
       this.startCity = e;
       this.startCode = c;
       this.getCitiesShow = false;
       this.startProvincesShow = false;
-      this.province =  e;
+      this.province =  this.startProvince;
       this.pro_code = this.pro_code;
       this.city = this.startCity;
       this.city_code = this.startCode;
@@ -475,18 +489,29 @@ export default {
     endProvinces(e,c) {
       this.getEndCities = []
       this.getEndCitiesShow = true;
+      this.endProvince = e;
+      this.pro_code = c;
       var url = this.$global_msg.getCities;
       var obj = { pro_code: c };
       this.axios.post(url, obj).then(res => {
         // console.log(res)
         var data = res.data;
-        // console.log(data)
-        if(data.status==0 && data.data == null) {
-          var i = {};
-          i.city=e;
+        console.log(data.data)
+        // console.log(data.data.length)
+        if(data.status==0 && data.data == null ) {
+          var i = {city:e};
+          ;
           this.getEndCities = this.getEndCities.concat(i);
         }else{
-          this.getEndCities = data.data;
+          // this.getEndCities = data.data;
+          // 直辖市限制
+          if (data.data.length<3) {
+            var i = {city:e ,code:data.data[0].code};
+            this.getEndCities = this.getEndCities.concat(i);
+            console.log(111)
+          }else{
+            this.getEndCities = data.data;
+          }
         }
       });
     },
@@ -514,18 +539,27 @@ export default {
       this.getViaCitiesShow = true;
       this.viaProvincesShow = false;
       this.viaProvince = e;
+      this.pro_code = c;
       var url = this.$global_msg.getCities;
       var obj = { pro_code: c };
       this.axios.post(url, obj).then(res => {
         // console.log(res)
         var data = res.data;
         if(data.status==0 && data.data == null) {
-          var i = {};
-          i.city=e;
+          var i = {city:e};
+          ;
           this.getViaCities = this.getViaCities.concat(i);
           // console.log('viaProvinces====',this.getViaCities)
         }else{
-          this.getViaCities = data.data;
+          // this.getViaCities = data.data;
+           // 直辖市限制
+          if (data.data.length<3) {
+            var i = {city:e ,code:data.data[0].code};
+            this.getViaCities = this.getViaCities.concat(i);
+            console.log(111)
+          }else{
+            this.getViaCities = data.data;
+          }
         }
       });
     },
@@ -566,7 +600,7 @@ export default {
     // 地址选择
     checkDetails(item) {
       this.showBanner = false;
-      // console.log(item)
+      console.log(item)
       var data = {};
       data.province = this.province;
       data.pro_code = this.pro_code;
@@ -578,7 +612,7 @@ export default {
       data.address = item.address.length != 0 ? item.address : item.province;
       data.latitude = item.location.lat;
       data.longitude = item.location.lng;
-      // console.log('checkDetails=====',data);
+      console.log('checkDetails=====',data);
       // var type=this.query.type
       // this.$store.commit('changePoint', {data:data,type:type})
       this.getCitiesShow = false;
@@ -708,11 +742,12 @@ export default {
       var url='web/ThirdReportBusLine/report';
       this.axios.post(url, uplaodObj)
       .then(res=>{
-        // console.log(res);
+        console.log(res);
         var data=res.data;
         if(res.status==200 && data.status==1){
           this.fullscreenLoading = false;
           this.$toast(data.msg)
+          // this.$emit('lineChildFn', this.lineMessage)
           this.reload()
         }else{
           this.fullscreenLoading = false;
@@ -738,15 +773,15 @@ export default {
         driving.search(startLngLat, endLngLat, function(status, result) {
           // 未出错时，result即是对应的路线规划方案
           // console.log(result);
-          if(result.routes.length>0){
+            if(result.routes.length>0){
             that.intervals.push(result.routes[0].distance)
             that.spaces.push(result.routes[0].time)
             that.getDriving(points, i+1);
               // console.log(that.intervals)
-              // console.log(that.spaces)
-          }else{
-            this.$toast('路线规划失败，请稍后再试')
-          }
+                // console.log(that.spaces)
+            }else{
+              this.$toast('路线规划失败，请稍后再试')
+            }
         });
       } else {
         this.uplaodClick();

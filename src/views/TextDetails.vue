@@ -364,7 +364,8 @@ export default {
         this.start_time = data.start_time;
         this.end_time = data.end_time;
         // var s= new Date(data.period*1000);
-        this.period = (new Date(data.period*1000) % (1000 * 60 * 60)) / (1000 * 60)+'分钟';
+        // this.period = (new Date(data.period*1000) % (1000 * 60 * 60)) / (1000 * 60)+'分钟';
+        this.period = data.period+'分钟';
         this.start_name = data.start_name;
         if(data.pass_points.length!=1){
           for (var name of data.pass_points) {

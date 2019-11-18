@@ -11,7 +11,7 @@
           <addcard class="tab-card"></addcard>
         </el-tab-pane>
         <el-tab-pane label="线路上传" name="second">
-          <addtext></addtext>
+          <addtext @lineChildFn="lineParentFn"></addtext>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -36,6 +36,9 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    lineParentFn() {
+      this.activeName = 'second'
+    }
   },
   created () {},
   mounted () {}
