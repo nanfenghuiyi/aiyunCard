@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <div class="header">
+    <!-- <div class="header">
       <i @click="goBack"></i>
       <div>名片上传</div>
-    </div>
+    </div> -->
     <div class="section-header">登录账号</div>
     <div class="section-style">
       <div class="code">+86</div>
@@ -52,7 +52,7 @@ export default {
         type: "password",
         src: require("../assets/login/hide.png")
       },
-      message: {title:'', loginStatus:'', loginShow: false},
+      message: {loginStatus:'', loginShow: false},
       errorMessage: {loginShow: false,errorShow: true,}
     }
   },
@@ -103,6 +103,7 @@ export default {
       })
     },
     errorClick() {
+      console.log('密码',1111)
       this.$emit('errorChildFn', this.errorMessage);
     }
   },
@@ -124,11 +125,12 @@ input{
   color:rgba(153,153,153,1);
 }
 .container{
-  width:350px;
-  height:406px;
-  background:rgba(255,255,255,1);
-  border-radius:6px;
+  width: 100%px;
+  height: 406px;
+  background: rgba(255,255,255,1);
+  border-radius: 6px;
   margin: 0 auto;
+  padding: 0 25px
 }
 .header {
   position: relative;

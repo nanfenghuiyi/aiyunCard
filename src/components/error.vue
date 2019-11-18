@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" >
     <div class="header">找回密码</div>
     <div class="section">
       <div>若忘记密码，需找回或修改密码，请与本平台工作人员联系，谢谢合作！</div>
@@ -7,6 +7,25 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  inject: ['reload'],
+  data () {
+    return {
+      errorMessage: {
+        loginShow: false,
+        errorShow: true
+      }
+    }
+  },
+  methods: {
+    errorClick() {
+      this.$emit('errorChildFn', this.errorMessage)
+    }
+  },
+}
+</script>
 
 <style scoped>
 .container{

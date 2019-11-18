@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="header">
+    <!-- <div class="header">
       <i @click="goBack"></i>
       <div>名片上传</div>
     </div>
@@ -12,7 +12,7 @@
         <img src="../assets/home/tianjia.png" alt />
         点击上传名片
       </div>
-    </div>
+    </div> -->
     <div class="newsStyle">
       <div
         class="newsStyle-border"
@@ -22,6 +22,7 @@
       <!-- <div @click="newRecords">今天</div> -->
       <div :class="{textActive:dataActive==false}" @click="dataPopup" v-text="checkDate"></div>
     </div>
+    <div>名片信息： {{addListNum}}条</div>
     <div class="imgNews">
       <ul v-infinite-scroll="load" infinite-scroll-disabled="disabled">
         <li v-for="(item,i) in addList" :key="i">
@@ -84,8 +85,6 @@ export default {
   inject: ["reload"],
   data() {
     return {
-      title1: "登录账号",
-      title2: "",
       loginStatus: true,
       show: false,
       dataShow: false, // 时间选择页面
@@ -241,7 +240,7 @@ export default {
       var obj = { url, user_id, page, page_size };
       this.axios.post(url, obj).then(res => {
         var data = res.data;
-        // console.log(data)
+        console.log(data)
         if (data.data.total == null) {
           this.addListNum = 0;
         } else {
@@ -280,7 +279,7 @@ export default {
           // console.log(this.addList)
         }
       });
-    }
+    },
   },
   computed: {
     noMore() {
@@ -293,6 +292,8 @@ export default {
   created() {
     // console.log(JSON.parse(localStorage.getItem('user')))
     if (JSON.parse(localStorage.getItem("user")) != null) {
+      // this.$emit('addListNumChildFn', this.addListNum);
+      
       this.records();
     }
     this.data();
@@ -302,6 +303,7 @@ export default {
     }else {
       this.$router.push({path: '/'})
     }
+    
   }
 };
 </script>

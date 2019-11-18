@@ -1,16 +1,16 @@
 <template>
   <div class="container" :class="showBanner?'container-active':''">
-    <div class="header">
+    <!-- <div class="header">
       <i @click="goBack"></i>
       <div>路线上传</div>
-    </div>
+    </div> -->
     <div class="section">
       <div>
         <p class="section-text">车辆信息</p>
         <ul>
           <li class="section-car">
             <div>有无车牌</div>
-            <el-dropdown @command="handleCommand">
+            <el-dropdown @command="handleCommand" trigger='click'>
               <span class="el-dropdown-link" v-text="carPlateShow[commandCarPlate]"></span>
               <i class="el-icon-arrow-down el-icon--right"></i>
               <el-dropdown-menu slot="dropdown">
@@ -48,7 +48,7 @@
         <ul>
           <li class="section-car">
             <div>类型</div>
-            <el-dropdown @command="shiftsCommand">
+            <el-dropdown trigger='click' @command="shiftsCommand">
               <span class="el-dropdown-link" v-text="shiftsShow[commandShifts]"></span>
               <i class="el-icon-arrow-down el-icon--right"></i>
               <el-dropdown-menu slot="dropdown">
@@ -187,7 +187,7 @@
         :style="{ height: '100%',width: '70%' }"
       >
         <ul v-for="(item, index) of getEndProvinces" :key="index">
-          <li data-index="index" @click="endProvinces(item.province_code)">{{item.province}}</li>
+          <li data-index="index" @click="endProvinces(item.province,item.province_code)">{{item.province}}</li>
         </ul>
       </van-popup>
       <van-popup
@@ -209,7 +209,7 @@
           :style="{ height: '100%',width: '70%' }"
         >
           <ul v-for="(item, index) of getViaProvinces" :key="index">
-            <li data-index="index" @click="viaProvinces(item.province_code)">{{item.province}}</li>
+            <li data-index="index" @click="viaProvinces(item.province,item.province_code)">{{item.province}}</li>
           </ul>
         </van-popup>
         <van-popup
@@ -228,11 +228,11 @@
       <van-popup
           v-model="mapShow"
           position="bottom"
-          :style="{ height: '90%',width: '100%' }"
+          :style="{ height: '80%',width: '100%' }"
         >
           <div class="test">
-            <div id="container"></div>
-            <div id="myPageTop">
+            <div class="map-container">{{city}}</div>
+            <div class="myPageTop">
               <div>
                 请输入详细地址
                 <input class="mapInput" v-model="value" @input="changeInput()"/>
@@ -241,7 +241,7 @@
                 <ul>
                   <li v-for="(item, index) of tips" :key="index" @click="checkDetails(item)">
                     <div>{{item.name}}</div>
-                    <div>{{item.district}}{{item.address.lenth != 0 ? item.address : ""}}</div>
+                    <div>{{item.district}}{{item.address == null ? item.address : ""}}</div>
                   </li>
                 </ul>
               </div>
@@ -342,12 +342,6 @@ export default {
     };
   },
   methods: {
-    //通过百度地图获取当前城市
-    getCurrentCity() {
-      getCurrentCityName().then(city => {
-        console.log(city); //顺利的话能在控制台打印出当前城市
-      });
-    },
     goBack() {
       this.$router.go(-1);
     },
@@ -408,18 +402,14 @@ export default {
         this.start_time = (new Date((year+ '/' + month + '/' + day + ' ' + value + ":00")).getTime())/1000;
         // console.log(this.start_time)
         this.goStartTime = value;
-        // console.log(this.goStartTime)
-        // this.timeShow = false;
       }else if (this.timeNum==3) {
         this.end_time = (new Date((year+ '/' + month + '/' + day + ' ' + value + ":00")).getTime())/1000;
         this.goEndTime = value;
-        // this.timeShow = false;
       }else if(this.timeNum==4){
         this.period = (new Date((year+ '/' + month + '/' + day + ' ' + value + ":00")).getTime())/1000;
         this.goViaTime = value;
       }
         this.timeShow = false;
-      
     },
     endData() {
       // console.log('取消按钮')
@@ -431,7 +421,7 @@ export default {
       this.axios.post(url, []).then(res => {
         // console.log(res)
         var data = res.data;
-        console.log(data)
+        // console.log(data)
         this.getProvinces = data.data;
         this.getEndProvinces = data.data;
         this.getViaProvinces = data.data;
@@ -445,41 +435,36 @@ export default {
       this.type = 0;
     },
     startProvinces(e,c) {
+      this.getCities = [];
       // console.log(e)
+      // console.log(c)
       this.getCitiesShow = true;
       this.pro_code = c;
       var url = this.$global_msg.getCities;
       var obj = { pro_code: c };
       this.axios.post(url, obj).then(res => {
-        console.log(res);
         var data = res.data;
-        // console.log(data)
-        this.getCities = data.data;
-        console.log(this.getCities)
+        // console.log(data);
+        if(data.status==0 && data.data == null) {
+          var i = {};
+          i.city=e;
+          this.getCities = this.getCities.concat(i);
+        }else{
+          this.getCities = data.data;
+        }
       });
     },
     startCities(e, c) {
       this.showBanner = false;
       this.startCity = e;
       this.startCode = c;
-      // this.checkStart = this.pro_code + "-" + this.startCity;
       this.getCitiesShow = false;
       this.startProvincesShow = false;
       this.province =  e;
       this.pro_code = this.pro_code;
       this.city = this.startCity;
       this.city_code = this.startCode;
-      // this.mapStartShow = true;
-      // var startObj = {
-      //   province: this.startProvince,
-      //   city: this.startCity,
-      //   city_code: this.startCode,
-      //   type: 0
-      // };
-      // console.log(this.startProvince, this.startCity);
-      // console.log(startObj);
       this.mapShow = true;
-      // this.$router.push({ path: "/map", query: startObj });
     },
     // 设置终点
     setEnd() {
@@ -487,22 +472,27 @@ export default {
       this.getTheProvinces();
       this.type = 1
     },
-    endProvinces(e) {
+    endProvinces(e,c) {
+      this.getEndCities = []
       this.getEndCitiesShow = true;
-      this.endProvince = e;
       var url = this.$global_msg.getCities;
-      var obj = { pro_code: e };
+      var obj = { pro_code: c };
       this.axios.post(url, obj).then(res => {
         // console.log(res)
         var data = res.data;
         // console.log(data)
-        this.getEndCities = data.data;
+        if(data.status==0 && data.data == null) {
+          var i = {};
+          i.city=e;
+          this.getEndCities = this.getEndCities.concat(i);
+        }else{
+          this.getEndCities = data.data;
+        }
       });
     },
     endCities(e, c) {
       this.endCity = e;
       this.endCode = c;
-      // this.checkEnd = this.endProvince + "-" + this.endCity;
       this.getEndCitiesShow = false;
       this.endProvincesShow = false;
       this.mapEndShow = true;
@@ -518,18 +508,25 @@ export default {
       this.getTheProvinces();
       this.type = 2
     },
-    viaProvinces(e) {
+    viaProvinces(e,c) {
+      this.getViaCities = []
       // console.log(111)
       this.getViaCitiesShow = true;
       this.viaProvincesShow = false;
       this.viaProvince = e;
       var url = this.$global_msg.getCities;
-      var obj = { pro_code: e };
+      var obj = { pro_code: c };
       this.axios.post(url, obj).then(res => {
         // console.log(res)
         var data = res.data;
-        console.log("getViaCities===", data)
-        this.getViaCities = data.data;
+        if(data.status==0 && data.data == null) {
+          var i = {};
+          i.city=e;
+          this.getViaCities = this.getViaCities.concat(i);
+          // console.log('viaProvinces====',this.getViaCities)
+        }else{
+          this.getViaCities = data.data;
+        }
       });
     },
     viaCities(e, c) {
@@ -562,15 +559,14 @@ export default {
       var autoComplete = new AMap.Autocomplete(autoOptions);
       autoComplete.search(that.value, function(status, res) {
         // 搜索成功时，result即是对应的匹配数据
-        console.log("getSerachAddress===", res);
+        // console.log("getSerachAddress===", res);
         that.tips = res.tips;
-        console.log(that.tips)
       });
     },
     // 地址选择
     checkDetails(item) {
       this.showBanner = false;
-      console.log(item)
+      // console.log(item)
       var data = {};
       data.province = this.province;
       data.pro_code = this.pro_code;
@@ -582,7 +578,7 @@ export default {
       data.address = item.address.length != 0 ? item.address : item.province;
       data.latitude = item.location.lat;
       data.longitude = item.location.lng;
-      console.log('checkDetails=====',data);
+      // console.log('checkDetails=====',data);
       // var type=this.query.type
       // this.$store.commit('changePoint', {data:data,type:type})
       this.getCitiesShow = false;
@@ -594,21 +590,21 @@ export default {
       this.mapShow = false;
       this.value = '';
       this.tips = [];
-      console.log('str=====',data.city)
+      // console.log('str=====',data.city)
       var str = data.name+"-"+(data.city == [] ? data.province : data.city);
-      console.log(str)
+      // console.log(str)
       if(this.type == 0) {
         this.checkStart = str;
         this.start = data
-        console.log(data);
+        // console.log(data);
       }else if (this.type == 1) {
         this.checkEnd = str;
-        console.log('checkEnd====',this.checkEnd)
+        // console.log('checkEnd====',this.checkEnd)
         this.end = data
       }else if (this.type == 2) {
         this.checkVia = str;
         this.pass_points = [data]
-        console.log('pass_points=====',this.pass_points);
+        // console.log('pass_points=====',this.pass_points);
       }
     },
 
@@ -679,7 +675,7 @@ export default {
       } else {
         //提示
         this.$toast("手机号码格式错误");
-        console.log(this.points)
+        // console.log(this.points)
         return;
       }
       
@@ -708,11 +704,11 @@ export default {
         pass_points: this.pass_points
       };
 
-      console.log("uplaodObj", uplaodObj);
+      // console.log("uplaodObj", uplaodObj);
       var url='web/ThirdReportBusLine/report';
       this.axios.post(url, uplaodObj)
       .then(res=>{
-        console.log(res);
+        // console.log(res);
         var data=res.data;
         if(res.status==200 && data.status==1){
           this.fullscreenLoading = false;
@@ -720,12 +716,7 @@ export default {
           this.reload()
         }else{
           this.fullscreenLoading = false;
-          // that.spaces = new Array();
-          // that.intervals = new Array();
-          // console.log(that.spaces)
-          // console.log(that.intervals)
           this.$toast(data.msg)
-          console.log('测试',1111)
         }
       })
     },
@@ -733,11 +724,11 @@ export default {
     getDriving(points, i) {
       // i=this.i
       this.fullscreenLoading = true;
-      console.log(points.length);
+      // console.log(points.length);
       // console.log(i);
       var that=this
       if (i != points.length - 1) {
-        console.log("111111", points,points.length);
+        // console.log("111111", points,points.length);
         var driving = new AMap.Driving({
           // 驾车路线规划策略，AMap.DrivingPolicy.LEAST_TIME是最快捷模式
           policy: AMap.DrivingPolicy.LEAST_TIME
@@ -746,21 +737,18 @@ export default {
         var endLngLat = [points[i+1].longitude, points[i+1].latitude];
         driving.search(startLngLat, endLngLat, function(status, result) {
           // 未出错时，result即是对应的路线规划方案
-          console.log(result);
+          // console.log(result);
           if(result.routes.length>0){
             that.intervals.push(result.routes[0].distance)
             that.spaces.push(result.routes[0].time)
             that.getDriving(points, i+1);
-              console.log(that.intervals)
-              console.log(that.spaces)
+              // console.log(that.intervals)
+              // console.log(that.spaces)
           }else{
             this.$toast('路线规划失败，请稍后再试')
           }
         });
       } else {
-        console.log(that.intervals)
-        console.log(that.spaces)
-        // this.i = 0;
         this.uplaodClick();
       }
     },
@@ -773,7 +761,7 @@ export default {
       if(point.type == 0) {
         this.checkStart = str;
         this.startPoint = point.data;
-        console.log("data====", point.data);
+        // console.log("data====", point.data);
       }else if (point.type == 1) {
         this.checkEnd = str;
         this.endPoint = point.data;
@@ -891,15 +879,20 @@ input {
   white-space: nowrap;
 }
 /* 地图 */
-#myPageTop {
-  margin-top: 20px;
+.map-container{
+  font-size: 16px;
+  padding-top: 15px;
+}
+.myPageTop {
+  font-size: 16px;
+  margin-top: 10px;
 }
 .section-list{
   width: 100%;
-  height: 500px;
+  height: 430px;
   overflow-y: scroll;
   z-index: 999;
-  margin-top: 20px;
+  margin-top: 10px;
   border-top: 1px solid #eee;
 }
 .section-list li{

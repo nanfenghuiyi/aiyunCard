@@ -1,9 +1,9 @@
 <template>
   <div class="container" :style="styleObject">
-    <div class="busText">
+    <!-- <div class="busText">
       <i @click="goBack"></i>
       <div>名片上传</div>
-    </div>
+    </div> -->
     <div class="footer">
       <div class="upload">
         <div class="btn btnActive" v-loading.fullscreen.lock="fullscreenLoading" @click="uplaodClick">确定上传</div>

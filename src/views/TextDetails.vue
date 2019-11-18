@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="header">
+    <!-- <div class="header">
       <i @click="goBack"></i>
       <div>线路上传</div>
     </div>
@@ -12,7 +12,7 @@
         <img src="../assets/home/tianjia.png" alt />
         点击上传线路
       </div>
-    </div>
+    </div> -->
     <div class="newsStyle">
       <div
         class="newsStyle-border"
@@ -22,6 +22,7 @@
       <!-- <div @click="newRecords">今天</div> -->
       <div :class="{textActive:dataActive==false}" @click="dataPopup" v-text="checkDate"></div>
     </div>
+    <div>名片信息： {{addListNum}}条</div>
     <div class="imgNews">
       <ul v-infinite-scroll="load" infinite-scroll-disabled="disabled">
         <li v-for="(item,i) in addList" :key="i">
@@ -376,7 +377,7 @@ export default {
         this.phone = data.phone!=null?data.phone:'无';
         console.log(this.phone)
       })
-    }
+    },
   },
   computed: {
     noMore() {
@@ -499,7 +500,7 @@ export default {
   height: 40px;
   background: rgba(255, 255, 255, 1);
   margin: 0 auto;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 }
 .newsStyle div {
   flex: 1;

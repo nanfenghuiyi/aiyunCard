@@ -39,7 +39,7 @@ const lineRecords= 'web/ThirdReportBusLine/records'
 if (window.location.host == 'card.a56999.com') {
   baseUrl = 'https://aybapi.a56999.com'
 } else {
-  baseUrl = 'http://118.190.203.67:8080'
+  baseUrl = 'http://sit.aybapi.a56999.com'
 }
 
 export default {

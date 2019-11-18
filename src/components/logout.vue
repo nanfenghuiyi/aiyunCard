@@ -33,15 +33,11 @@ export default {
         var data = res.data;
         this.$store.commit('_removeStorage','user');
         if(res.status==200 && data.status==1){
-          setTimeout(() => {
-            this.$toast(data.msg)
-            this.reload()
-          }, 2000);
+          this.$toast(data.msg)
+          this.reload()
         }else{
-          setTimeout(() => {
-            this.$toast(data.msg)
-            this.reload()
-          }, 2000);
+          this.$toast(data.msg)
+          this.reload()
         }
       })
     },
@@ -50,18 +46,18 @@ export default {
     }
   },
   created () {
-    var phone=JSON.parse(localStorage.getItem('user')).user.phone;
-    this.title = phone.replace(/(\d{3})\d{4}(\d{4})/,"$1****$2")
+    // var phone=JSON.parse(localStorage.getItem('user')).user.phone;
+    // this.title = phone.replace(/(\d{3})\d{4}(\d{4})/,"$1****$2")
   }
 }
 </script>
 
 <style scoped>
 .container{
-  width:350px;
-  height:200px;
-  background:rgba(255,255,255,1);
-  border-radius:6px;
+  width: 350px;
+  height: 200px;
+  background: rgba(255,255,255,1);
+  border-radius: 6px;
 }
 .header{
   font-size:18px;

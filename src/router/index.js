@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Checkupload from "../views/Checkupload.vue";
-import Login from "../views/Login.vue"
+// import Checkupload from "../views/Checkupload.vue"
+import Home from "../views/Home.vue"
+import Upload from "../views/Upload.vue"
+// import Login from "../views/Login.vue"
 import CardDetails from '../views/CardDetails.vue'
 import AddCard from "../views/AddCard.vue"
 import TextDetails from '../views/TextDetails.vue'
@@ -12,14 +14,24 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    name: 'home',
+    component: Home,
+  },
+  /* {
+    path: '/checkupload',
     name: 'checkupload',
     component: Checkupload,
-  },
+  }, */
   {
+    path: '/upload',
+    name: 'upload',
+    component: Upload,
+  },
+  /* {
     path: '/login',
     name: 'login',
     component: Login,
-  },
+  }, */
   {
     path: '/carddetails',
     name: 'carddetails',
