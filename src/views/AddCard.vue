@@ -84,11 +84,11 @@ export default {
           var msg = res.data.msg;
           var status = res.data.status;
           this.fullscreenLoading = true;
-          setTimeout(() => {
+          // setTimeout(() => {
             this.fullscreenLoading = false;
             this.$toast(msg);
             this.reload();
-          }, 2000);
+          // }, 2000);
         })
       } else if(this.uploadPercent == 0){
         this.$toast("请选择图片");
