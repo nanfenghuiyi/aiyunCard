@@ -2,7 +2,7 @@
   <div class="container">
     <div class="header">
       <i @click="goBack"></i>
-      <div>路线上传</div>
+      <div>信息上传</div>
     </div>
     <!-- tab标签 -->
     <div class="section">
@@ -10,7 +10,10 @@
         <el-tab-pane label="名片上传" name="first">
           <addcard class="tab-card"></addcard>
         </el-tab-pane>
-        <el-tab-pane label="线路上传" name="second">
+        <el-tab-pane label="表格上传" name="second">
+          <addform @formChildFn="formParentFn"></addform>
+        </el-tab-pane>
+        <el-tab-pane label="线路上传" name="three">
           <addtext @lineChildFn="lineParentFn"></addtext>
         </el-tab-pane>
       </el-tabs>
@@ -19,8 +22,9 @@
 </template>
 
 <script>
-import addcard from "./AddCard"
-import addtext from "./AddText"
+import addcard from "../components/AddCard"
+import addtext from "../components/AddText"
+import addform from "../components/AddForm";
 
 export default {
   data () {
@@ -28,7 +32,7 @@ export default {
       activeName: 'first',
     }
   },
-  components: {addcard,addtext},
+  components: {addcard,addform,addtext},
   props: {},
   watch: {},
   computed: {},
@@ -38,10 +42,17 @@ export default {
     },
     lineParentFn() {
       this.activeName = 'second'
-    }
+    },
+    formParentFn() {
+      this.activeName = 'three'
+    },
   },
-  created () {},
-  mounted () {}
+  mounted () {
+    if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user.user_id != null) {
+    }else {
+      this.$router.push({path: '/'})
+    }
+  }
 }
 </script>
 
@@ -75,7 +86,9 @@ export default {
   margin-top: 44px;
 }
 .tab-card{
-  height: 570px !important;
+  /* height: 570px !important; */
 }
 </style>
 
+<style>
+</style>

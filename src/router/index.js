@@ -4,10 +4,10 @@ import VueRouter from 'vue-router'
 import Home from "../views/Home.vue"
 import Upload from "../views/Upload.vue"
 // import Login from "../views/Login.vue"
-import CardDetails from '../views/CardDetails.vue'
-import AddCard from "../views/AddCard.vue"
-import TextDetails from '../views/TextDetails.vue'
-import AddText from "../views/AddText.vue"
+// import CardDetails from '../views/CardDetails.vue'
+// import AddCard from "../views/AddCard.vue"
+// import TextDetails from '../views/TextDetails.vue'
+// import AddText from "../views/AddText.vue"
 
 Vue.use(VueRouter)
 
@@ -16,42 +16,14 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
+    // component: resolve => require(['../views/Home.vue'], resolve)
   },
-  /* {
-    path: '/checkupload',
-    name: 'checkupload',
-    component: Checkupload,
-  }, */
   {
     path: '/upload',
     name: 'upload',
     component: Upload,
+    // component: resolve => require(['../views/Upload.vue'], resolve)
   },
-  /* {
-    path: '/login',
-    name: 'login',
-    component: Login,
-  }, */
-  {
-    path: '/carddetails',
-    name: 'carddetails',
-    component: CardDetails,
-  },
-  {
-    path: '/addcard',
-    name: 'addcard',
-    component: AddCard,
-  },
-  {
-    path: '/textdetails',
-    name: 'textdetails',
-    component: TextDetails,
-  },
-  {
-    path: '/addtext',
-    name: 'addtext',
-    component: AddText,
-  }
 ]
 
 const router = new VueRouter({

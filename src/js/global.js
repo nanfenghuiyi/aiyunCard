@@ -33,7 +33,11 @@ const detail = 'web/ThirdReportBusLine/detail'
 // 上报的记录
 const lineRecords= 'web/ThirdReportBusLine/records'
 
+// 上报名片带数据
+const lineCardUpload = 'Web/ThirdUploadWithData/upload'
 
+// 上报名片带数据的记录
+const lineCardRecords = 'Web/ThirdUploadWithData/records'
 
 
 if (window.location.host == 'card.a56999.com') {
@@ -53,5 +57,7 @@ export default {
   getProvinces,
   getCities,
   detail,
-  lineRecords
+  lineRecords,
+  lineCardUpload,
+  lineCardRecords
 }

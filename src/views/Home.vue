@@ -13,23 +13,22 @@
       <div>
         <div class="uploadCard" @click="getAdd">
           <img src="../assets/home/tianjia.png" alt />
-          点击上传线路
+          点击上传信息
         </div>
       </div>
       </div>
-      <!-- <div class="user-news">
-        <div class="cardAll">名片信息： {{numCard}}条</div>
-        <div>线路信息： {{numLine}}条</div>
-      </div> -->
     </div>
     <!-- tab标签 -->
     <div>
       <el-tabs v-model="activeName" type="card" :stretch="true" @tab-click="handleClick">
         <el-tab-pane label="名片信息" name="first">
-          <carddetails @addListNumChildFn="addListNumParentFn"></carddetails>
+          <carddetails @cardChildFn="cardParentFn"></carddetails>
         </el-tab-pane>
-        <el-tab-pane label="路线信息" name="second">
-          <textdetails></textdetails>
+        <el-tab-pane label="表格信息" name="second">
+          <formdetails @cardChildFn="cardParentFn"></formdetails>
+        </el-tab-pane>
+        <el-tab-pane label="线路信息" name="three">
+          <textdetails @cardChildFn="cardParentFn"></textdetails>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -55,8 +54,9 @@
 </template>
 
 <script>
-import carddetails from "./CardDetails"
-import textdetails from "./TextDetails"
+import carddetails from "../components/CardDetails"
+import textdetails from "../components/TextDetails"
+import formdetails from "../components/FormDetails"
 import login from "../components/Login"
 import logout from "../components/logout"
 import error from "../components/error"
@@ -73,7 +73,7 @@ export default {
       numLine: 0,
     }
   },
-  components: {carddetails,textdetails,login,logout,error},
+  components: {carddetails,textdetails,formdetails,login,logout,error},
   props: {},
   watch: {},
   computed: {},
@@ -85,7 +85,7 @@ export default {
       }
     },
     isLogin() {
-      if (JSON.parse(localStorage.getItem("user")) != null) {
+      if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != null && JSON.parse(localStorage.getItem("user")).user.phone != null) {
         this.logoutShow = true;
         // this.loginShow = true;
       }else {
@@ -107,24 +107,23 @@ export default {
       this.errorShow = true
     },
     getAdd() {
-      if (JSON.parse(localStorage.getItem("user")) != null) {
+      if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != null && JSON.parse(localStorage.getItem("user")) != null) {
         this.$router.push({ path: "/Upload" });
       } else {
         this.$toast('请登录')
         this.loginShow = true;
       }
     },
-    // 获取名片信息
-    addListNumParentFn(payload) {
-      console.log(payload)
-      console.log('addListNumParentFn====',11111)
+    // 未登陆提示登陆
+    cardParentFn(payload) {
+      this.loginShow = payload;
     },
   },
   mounted () {
-    if (JSON.parse(localStorage.getItem("user")) != null) {
+    if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != null && JSON.parse(localStorage.getItem("user")).user.phone != null) {
       var phone = JSON.parse(localStorage.getItem("user")).user.phone;
       this.title = phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-    }
+    };
   }
 }
 </script>
@@ -136,7 +135,7 @@ export default {
 }
 .container-header{
   width: 100%;
-  height: 120px;
+  height: 100px;
   background: rgba(18, 165, 137, 1);
 }
 .header-user{

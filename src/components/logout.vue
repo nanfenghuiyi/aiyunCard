@@ -29,7 +29,7 @@ export default {
       // console.log(user_id)
       this.axios.post(url,obj)
       .then(res=>{
-        console.log(res)
+        // console.log(res)
         var data = res.data;
         this.$store.commit('_removeStorage','user');
         if(res.status==200 && data.status==1){
@@ -46,8 +46,11 @@ export default {
     }
   },
   created () {
-    // var phone=JSON.parse(localStorage.getItem('user')).user.phone;
-    // this.title = phone.replace(/(\d{3})\d{4}(\d{4})/,"$1****$2")
+    if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != null && JSON.parse(localStorage.getItem("user")).user.phone != null) {
+      var phone=JSON.parse(localStorage.getItem('user')).user.phone;
+    this.title = phone.replace(/(\d{3})\d{4}(\d{4})/,"$1****$2")
+    };
+    
   }
 }
 </script>

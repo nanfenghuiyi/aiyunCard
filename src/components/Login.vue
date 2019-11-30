@@ -7,7 +7,7 @@
     <div class="section-header">登录账号</div>
     <div class="section-style">
       <div class="code">+86</div>
-      <input type="number" placeholder="请输入手机号码" v-model="phone">
+      <input type="number" placeholder="请输入手机号码" oninput="if(value.length>11)value=value.slice(0,11)" v-model="phone">
     </div>
     <div class="section-style">
       <div class="checkText">验证码</div>
@@ -58,6 +58,7 @@ export default {
   },
   methods: {
     login() {
+      // console.log(this.phone)
       // this.$emit('loginChildFn', this.message);
       var phone = this.phone;
       var pwd = this.pwd;
@@ -125,7 +126,7 @@ input{
   color:rgba(153,153,153,1);
 }
 .container{
-  width: 100%px;
+  width: 300px;
   height: 406px;
   background: rgba(255,255,255,1);
   border-radius: 6px;

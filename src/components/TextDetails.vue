@@ -1,30 +1,16 @@
 <template>
   <div class="container">
-    <!-- <div class="header">
-      <i @click="goBack"></i>
-      <div>线路上传</div>
-    </div>
-    <div class="userNews">
-      <div class="userLogin">
-        <div class="cardAll">线路信息总数：{{addListNum}} 张</div>
-      </div>
-      <div class="uploadCard" @click="getAdd">
-        <img src="../assets/home/tianjia.png" alt />
-        点击上传线路
-      </div>
-    </div> -->
     <div class="newsStyle">
       <div
         class="newsStyle-border"
         :class="{textActive:dataActive==true, flexActive:dataActive==false}"
         @click="allRecords"
       >全部</div>
-      <!-- <div @click="newRecords">今天</div> -->
       <div :class="{textActive:dataActive==false}" @click="dataPopup" v-text="checkDate"></div>
     </div>
-    <div>名片信息： {{addListNum}}条</div>
+    <div>线路信息： {{addListNum}}条</div>
     <div class="imgNews">
-      <ul v-infinite-scroll="load" infinite-scroll-disabled="disabled">
+      <ul v-infinite-scroll="onload" infinite-scroll-disabled="disabled" infinite-scroll-immediate="false" infinite-scroll-delay="10">
         <li v-for="(item,i) in addList" :key="i">
           <div class="new-card">
             <div class="new-time">
@@ -46,17 +32,19 @@
         </li>
       </ul>
       <div class="noneNews" v-if="loading">加载中</div>
-      <div class="noneNews" v-if="noMore">暂无更多名片资料</div>
+      <div class="noneNews" v-if="noMore">暂无更多路线资料</div>
     </div>
     <!-- 日期选择 -->
     <div>
       <van-popup round v-model="dataShow">
         <div class="datatime">
           <p v-text="start" @click="checkStart" :class="{ activeDate:checkActive==true}"></p>至
-          <p v-text="end" @click="checkEnd" :class="{ activeDate:checked==true}">结束日期</p>
+          <p v-text="end" @click="checkEnd" :class="{ activeDate:checkActive==false}">结束日期</p>
         </div>
-        <div v-if="check">
+        <div>
+          <!-- 开始时间 -->
           <van-datetime-picker
+            v-if="check"
             v-model="currentDate"
             type="date"
             :formatter="formatter"
@@ -66,10 +54,10 @@
             @cancel="endData"
             @change="startChange"
           />
-        </div>
-        <div v-else>
+          <!-- 结束时间 -->
           <van-datetime-picker
-            v-model="currentDate"
+            v-else
+            v-model="currentDate1"
             type="date"
             :formatter="formatter"
             :min-date="minDate"
@@ -83,47 +71,53 @@
     </div>
     <!-- 路线详情 -->
     <div>
-      <van-popup v-model="lineShow" style="width:80%;height:60%">
-        <div class="bus-details">车辆信息</div>
-        <div>
-          <ul>
-            <li class="bus-details-style">
-              <div>车牌</div>
-              <div v-text="full_plate"></div>
-            </li>
-            <li class="bus-details-style">
-              <div>类型</div>
-              <div v-text="is_flow"></div>
-            </li>
-            <li class="bus-details-style">
-              <div>开始时间</div>
-              <div v-text="start_time"></div>
-            </li>
-            <li class="bus-details-style">
-              <div>截止时间</div>
-              <div v-text="end_time"></div>
-            </li>
-            <li class="bus-details-style">
-              <div>间隔时间</div>
-              <div v-text="period"></div>
-            </li>
-            <li class="bus-details-style">
-              <div>起点</div>
-              <div v-text="start_name"></div>
-            </li>
-            <li class="bus-details-style">
-              <div>终点</div>
-              <div v-text="dest_name"></div>
-            </li>
-            <li class="bus-details-style">
-              <div>途径点</div>
-              <div v-text="pass_points_name"></div>
-            </li>
-            <li class="bus-details-style">
-              <div>随车电话</div>
-              <div v-text="phone"></div>
-            </li>
-          </ul>
+      <van-popup v-model="lineShow" style="width:80%">
+        <div class="bus-section">
+          <div class="bus-details">车辆信息</div>
+          <div>
+            <ul>
+              <li class="bus-details-style">
+                <div>车牌</div>
+                <div v-text="full_plate"></div>
+              </li>
+              <li class="bus-details-style">
+                <div>类型</div>
+                <div v-text="is_flow"></div>
+              </li>
+              <li class="bus-details-style">
+                <div>开始时间</div>
+                <div v-text="start_time"></div>
+              </li>
+              <li>
+                <ul v-if="is_time">
+                  <li class="bus-details-style">
+                    <div>截止时间</div>
+                    <div v-text="end_time"></div>
+                  </li>
+                  <li class="bus-details-style">
+                    <div>间隔时间</div>
+                    <div v-text="period"></div>
+                  </li>
+                </ul>
+              </li>
+              <li class="bus-details-style">
+                <div>起点</div>
+                <div v-text="start_name"></div>
+              </li>
+              <li class="bus-details-style">
+                <div>终点</div>
+                <div v-text="dest_name"></div>
+              </li>
+              <li class="bus-details-style">
+                <div>途径点</div>
+                <div v-text="pass_points_name"></div>
+              </li>
+              <li class="bus-details-style">
+                <div>随车电话</div>
+                <div v-text="phone"></div>
+              </li>
+            </ul>
+          </div>
         </div>
       </van-popup>
     </div>
@@ -157,6 +151,7 @@ export default {
       dataShow: false, // 时间选择页面
       dataActive: true,
       lineShow: false, // 路线详情
+      is_time: true, // 是否显示截止时间
       message: "",
       page: 1,
       newPage: 1,
@@ -170,6 +165,7 @@ export default {
       listNum: "",
       checkDate: "筛选",
       currentDate: new Date(),
+      currentDate1: new Date(),
       minDate: new Date(2019, 0, 1), // 最小时间
       maxDate: new Date(new Date().getFullYear(), 12, 30), // 最大时间
       check: true,
@@ -179,7 +175,7 @@ export default {
       start: "", // 开始时间
       end: "", // 结束时间
       checkActive: true,
-      checked: false
+      loginShow: true, // 登陆组件显示
     };
   },
   components: {
@@ -188,55 +184,46 @@ export default {
     logout
   },
   methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
-    getAdd() {
-      if (JSON.parse(localStorage.getItem("user")) != null) {
-        this.$router.push({ path: "/AddText" });
+    onload() {
+      this.loading = true;
+      if (this.newCheck) {
+        this.page++;
+        this.records(2);
       } else {
-        this.$router.push({ path: "/Login" });
+        this.page++;
+        this.records(1);
       }
     },
-    load() {
-      this.loading = true;
-      setTimeout(() => {
-        if (this.newCheck) {
-          this.newPage++;
-          this.newRecords();
-        } else {
-          this.page++;
-          this.records();
-        }
-      }, 2000);
-    },
     dataPopup() {
-      if (JSON.parse(localStorage.getItem("user")) != null) {
+      if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
         this.dataActive = false;
         this.dataShow = true;
+        this.addList = [];
         this.newList = [];
-        // console.log(this.addList)
       } else {
-        this.$router.push({ path: "/Login" });
+        this.$toast('请登陆');
+        this.$emit('cardChildFn', this.loginShow);
       }
     },
     allRecords() {
-      if (JSON.parse(localStorage.getItem("user")) != null) {
+      this.newCheck = false;
+      if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
         this.dataActive = true;
-        this.reload();
+        this.checkDate = '筛选';
+        this.page = 1;
+        this.addList = [];
+        this.records(1);
       } else {
-        this.$router.push({ path: "/Login" });
-        // this.loginShow = true;
+        this.$emit('cardChildFn', this.loginShow);
+        this.$toast('请登陆')
       }
     },
     checkStart() {
       this.check = true;
-      this.checked = false;
       this.checkActive = true;
     },
     checkEnd() {
       this.check = false;
-      this.checked = true;
       this.checkActive = false;
     },
     data() {
@@ -269,8 +256,9 @@ export default {
     },
     // 时间确定
     thisData() {
-      // console.log('确认时间')
-      this.newRecords();
+      this.page = 1;
+      this.newCheck = true;
+      this.records(2);
       this.checkDate = this.start + "至" + this.end;
       this.dataShow = false;
     },
@@ -296,60 +284,56 @@ export default {
         this.start = this.end;
       }
     },
-    // 全部上传记录
-    records() {
-      this.loginStatus = JSON.parse(localStorage.getItem("user")).user.info;
-      var phone = JSON.parse(localStorage.getItem("user")).user.phone;
-      this.title2 = phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
+    // 上传记录
+    records(index){
       var url = this.$global_msg.lineRecords;
-      var user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
+      // var user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
+      var user_id = this.user_id;
       var page = this.page;
-      var page_size = this.page_size;
-      var obj = { url, user_id, page, page_size };
-      this.axios.post(url, obj).then(res => {
-        var data = res.data;
-        console.log(data)
-        if (data.data.total == null) {
-          this.addListNum = 0;
-        } else {
-          var list = data.data.records;
-          this.listNum = list.length;
-          this.count += this.listNum;
-          this.addList = this.addList.concat(list);
-          this.addListNum = data.data.total;
-          this.loading = false;
-        }
-      });
-    },
-    // 今天上传记录
-    newRecords() {
-      this.newCheck = true;
-      var url = this.$global_msg.lineRecords;
-      var user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
-      var page = this.newPage;
       var page_size = this.page_size;
       var start = this.start;
       var end = this.end;
-      var obj = { user_id, page, page_size, start, end };
+      var obj1 = { url, user_id, page, page_size };
+      var obj2 = { user_id, page, page_size, start, end };
+      var obj = '';
+      if (index==1) {
+        obj = obj1
+      }else {
+        obj = obj2
+      }
+      // console.log(obj)
       this.axios.post(url, obj).then(res => {
         var data = res.data;
-        console.log(data)
+        // console.log(data)
         if (data.data.total == null) {
           this.addListNum = 0;
         } else {
           var list = data.data.records;
           this.listNum = list.length;
           this.count += this.listNum;
-          this.newList = this.newList.concat(list);
-          this.addList = this.newList;
+          if (index==1) {
+            this.addList = this.addList.concat(list);
+          }else {
+            this.newList = this.newList.concat(list);
+            this.addList = this.newList;
+          }
           this.addListNum = data.data.total;
           this.loading = false;
-          // console.log(this.addList)
         }
       });
     },
     // 详情记录
     lineDetail(e) {
+      // console.log(e)
+      this.full_plate = '';
+      this.is_flow = '';
+      this.start_time = '';
+      this.end_time = '';
+      this.period = '';
+      this.start_name = '';
+      this.pass_points_name = '';
+      this.dest_name = '';
+      this.phone = '';
       this.lineShow = true;
       var url = this.$global_msg.detail;
       var user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
@@ -358,25 +342,25 @@ export default {
       .then(res=>{
         // console.log(res)
         var data = res.data.data;
-        console.log(data);
+        // console.log(data);
         this.full_plate = data.full_plate!=''?data.full_plate:'无';
-        this.is_flow = data.is_flow==2?'流水班次':'固定班次';
+        this.is_time = data.is_flow==2 ? true : false;
+        this.is_flow = data.is_flow==2 ? '流水班次' : '固定班次';
         this.start_time = data.start_time;
         this.end_time = data.end_time;
-        // var s= new Date(data.period*1000);
-        // this.period = (new Date(data.period*1000) % (1000 * 60 * 60)) / (1000 * 60)+'分钟';
         this.period = data.period+'分钟';
         this.start_name = data.start_name;
-        if(data.pass_points.length!=1){
+        if(data.pass_points.length ==1 ){
+          this.pass_points_name = data.pass_points[0].pass_name
+        }else if(data.pass_points.length > 1){
           for (var name of data.pass_points) {
             this.pass_points_name=this.pass_points_name+'-'+name.pass_name
           };
-        }else{
-          this.pass_points_name = data.pass_points[0].pass_name
+        }else {
+          this.pass_points_name = '无';
         }
-        this.dest_name = data.dest_name;
-        this.phone = data.phone!=null?data.phone:'无';
-        console.log(this.phone)
+        this.dest_name = data.dest_name != null ? data.dest_name : '无';
+        this.phone = data.phone != null ? data.phone : '无';
       })
     },
   },
@@ -388,112 +372,18 @@ export default {
       return this.loading || this.noMore;
     }
   },
-  created() {
-    // console.log(JSON.parse(localStorage.getItem('user')))
-    if (JSON.parse(localStorage.getItem("user")) != null) {
-      this.records();
+  mounted() {
+    if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != null && JSON.parse(localStorage.getItem("user")).user.user_id != null) {
+      this.user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
+      this.records(1);
     }
     this.data();
-  },
-  mounted() {
-    if (JSON.parse(localStorage.getItem("user")) != null) {
-    }else {
-      this.$router.push({path: '/'})
-    }
   }
 };
 </script>
 
 <style scoped>
-.header {
-  position: relative;
-  width: 375px;
-  height: 44px;
-  line-height: 44px;
-  background: rgba(255, 255, 255, 1);
-  font-size: 16px;
-  color: rgba(51, 51, 51, 1);
-  display: flex;
-  margin: 0 auto;
-}
-.header i {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 40px;
-  background: url("../assets/add/left.png") center no-repeat;
-}
-.header div {
-  flex: 1;
-  text-align: center;
-}
-.userNews {
-  position: relative;
-  width: 375px;
-  height: 120px;
-  background: rgba(18, 165, 137, 1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 auto;
-}
-.userLogin {
-  position: absolute;
-  left: 20px;
-  top: 21px;
-  display: flex;
-  flex-direction: column;
-}
-.loginImg {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-.login-img {
-  width: 50px;
-  height: 50px;
-  background: rgba(202, 243, 235, 1);
-  border-radius: 6px;
-  border: 2px solid rgba(2, 131, 106, 1);
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.loginImg span {
-  font-size: 14px;
-  font-family: PingFangSC-Medium, PingFang SC;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 1);
-  line-height: 20px;
-  margin-left: 10px;
-}
-.cardAll {
-  text-align: left;
-  font-size: 12px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 1);
-  line-height: 17px;
-  margin-top: 22px;
-}
-.uploadCard {
-  position: absolute;
-  right: 20px;
-  font-size: 11px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 1);
-  line-height: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.uploadCard > img {
-  width: 30px;
-  height: 30px;
-}
+/*  */
 .newsStyle {
   display: flex;
   align-items: center;
@@ -501,7 +391,7 @@ export default {
   height: 40px;
   background: rgba(255, 255, 255, 1);
   margin: 0 auto;
-  /* margin-bottom: 10px; */
+  margin-bottom: 4px;
 }
 .newsStyle div {
   flex: 1;
@@ -517,7 +407,6 @@ export default {
 .textActive {
   color: rgba(18, 165, 137, 1) !important;
 }
-
 .newsStyle-border {
   border-right: 1px solid #979797;
 }
@@ -526,6 +415,7 @@ export default {
   height: 435px;
   width: 375px;
   margin: 0 auto;
+  margin-top: 4px;
 }
 .imgNews > ul > li {
   width: 350px;
@@ -536,8 +426,9 @@ export default {
   background: rgba(255, 255, 255, 1);
   border-radius: 4px;
   border-bottom: 1px solid #000;
-  padding-top: 20px;
+  padding: 10px 0;
 }
+/* *** */
 .bus-line-ul{
   /* border:1px solid red; */
   width:120px;
@@ -552,7 +443,9 @@ export default {
   overflow: hidden;
   white-space: nowrap;
 }
+/*  */
 .new-card {
+  height: 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -575,15 +468,8 @@ export default {
   font-weight: 400;
   color: rgba(51, 51, 51, 1);
 }
-.text-details {
-  width: 112px;
-  display: flex;
-  flex-direction:column;
-}
-.details-city{
-  display: flex;
-}
-
+/* *** */
+/*  */
 .noneNews {
   text-align: center;
   font-size: 14px;
@@ -591,21 +477,6 @@ export default {
   font-weight: 400;
   color: rgba(153, 153, 153, 1);
   line-height: 20px;
-}
-.big-imgCard {
-  width: 273px;
-}
-.big-imgCard img {
-  width: 100%;
-}
-.bigImg {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-.bigImg img {
-  width: 100%;
 }
 .datatime {
   width: 375px;
@@ -625,6 +496,7 @@ export default {
   color: #1989fa;
   border-bottom: 1px solid #1989fa !important;
 }
+/* *** */
 /* 路线详情 */
 .bus-details{
   font-size:16px;
@@ -636,33 +508,5 @@ export default {
 }
 .bus-details-style>div{
   padding: 10px 15px;
-}
-</style>
-
-<style>
-/* 
-***
-***所有组件样式修改
-***
- */
-/* 弹出框 */
-.van-popup--center.van-popup--round {
-  border-radius: 6px !important;
-}
-.van-picker__cancel,
-.van-picker__confirm {
-  /* padding: 0 2rem !important; */
-  flex: 1;
-  font-size: 0.5rem !important;
-}
-
-/* 图片查看器 */
-.viewer-toolbar .viewer-one-to-one,
-.viewer-prev,
-.viewer-next,
-.viewer-play,
-.viewer-flip-horizontal,
-.viewer-flip-vertical {
-  display: none !important;
 }
 </style>

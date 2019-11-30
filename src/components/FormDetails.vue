@@ -1,54 +1,42 @@
 <template>
   <div class="container">
-    <!-- <div class="header">
-      <i @click="goBack"></i>
-      <div>名片上传</div>
-    </div>
-    <div class="userNews">
-      <div class="userLogin">
-        <div class="cardAll">名片信息总数：{{addListNum}} 张</div>
-      </div>
-      <div class="uploadCard" @click="getAdd">
-        <img src="../assets/home/tianjia.png" alt />
-        点击上传名片
-      </div>
-    </div> -->
     <div class="newsStyle">
       <div
         class="newsStyle-border"
         :class="{textActive:dataActive==true, flexActive:dataActive==false}"
         @click="allRecords"
       >全部</div>
-      <!-- <div @click="newRecords">今天</div> -->
       <div :class="{textActive:dataActive==false}" @click="dataPopup" v-text="checkDate"></div>
     </div>
-    <div>名片信息： {{addListNum}}条</div>
+    <div>表格信息： {{addListNum}}条</div>
     <div class="imgNews">
-      <ul v-infinite-scroll="load" infinite-scroll-disabled="disabled">
+      <ul v-infinite-scroll="load" infinite-scroll-disabled="disabled" infinite-scroll-immediate="false" infinite-scroll-delay="10">
         <li v-for="(item,i) in addList" :key="i">
           <div class="new-card">
             <div class="new-time">
               <div></div>
               <span v-text="item.add_time"></span>
             </div>
-            <div class="img-card" v-viewer>
+            <div class="img-card" @click="textImgPopup(item.path,item.start)">
               <img v-lazy="item.path" alt class="images" />
             </div>
           </div>
         </li>
       </ul>
       <div class="noneNews" v-if="loading">加载中</div>
-      <div class="noneNews" v-if="noMore">暂无更多名片资料</div>
+      <div class="noneNews" v-if="noMore">暂无更多表格资料</div>
     </div>
     <!-- 日期选择 -->
     <div>
       <van-popup round v-model="dataShow">
         <div class="datatime">
           <p v-text="start" @click="checkStart" :class="{ activeDate:checkActive==true}"></p>至
-          <p v-text="end" @click="checkEnd" :class="{ activeDate:checked==true}">结束日期</p>
+          <p v-text="end" @click="checkEnd" :class="{ activeDate:checkActive==false}">结束日期</p>
         </div>
-        <div v-if="check">
+        <div>
+          <!-- 开始时间 -->
           <van-datetime-picker
+            v-if="check"
             v-model="currentDate"
             type="date"
             :formatter="formatter"
@@ -58,10 +46,10 @@
             @cancel="endData"
             @change="startChange"
           />
-        </div>
-        <div v-else>
+          <!-- 结束时间 -->
           <van-datetime-picker
-            v-model="currentDate"
+            v-else
+            v-model="currentDate1"
             type="date"
             :formatter="formatter"
             :min-date="minDate"
@@ -70,6 +58,22 @@
             @cancel="endData"
             @change="endChange"
           />
+        </div>
+      </van-popup>
+    </div>
+    <!-- 信息查看 -->
+    <div>
+      <van-popup v-model="textImgShow" style="width:80%;heigth:90%">
+        <div class="news-form-header">表格信息</div>
+        <div class="news-form-img" >
+          <img :src="thisPath" alt="" v-viewer @click="imgShow">
+        </div>
+        <div class="news-form-section">
+          <div>信息补充：</div>
+          <div class="form-section-first">
+            <div>始发站</div>
+            <div class="form-section-address" v-text="startAddress"></div>
+          </div>
         </div>
       </van-popup>
     </div>
@@ -102,6 +106,7 @@ export default {
       listNum: "",
       checkDate: "筛选",
       currentDate: new Date(),
+      currentDate1: new Date(),
       minDate: new Date(2019, 0, 1), // 最小时间
       maxDate: new Date(new Date().getFullYear(), 12, 30), // 最大时间
       check: true,
@@ -111,7 +116,10 @@ export default {
       start: "", // 开始时间
       end: "", // 结束时间
       checkActive: true,
-      checked: false
+      loginShow: true, // 登陆组件显示
+      textImgShow: false, // 信息查看
+      thisPath: '', // 当前图片URL
+      startAddress: '', // 始发站
     };
   },
   components: {
@@ -120,55 +128,49 @@ export default {
     logout
   },
   methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
-    getAdd() {
-      if (JSON.parse(localStorage.getItem("user")) != null) {
-        this.$router.push({ path: "/AddCard" });
-      } else {
-        this.$router.push({ path: "/Login" });
-      }
-    },
     load() {
       this.loading = true;
-      setTimeout(() => {
-        if (this.newCheck) {
-          this.newPage++;
-          this.newRecords();
-        } else {
-          this.page++;
-          this.records();
-        }
-      }, 2000);
+      if (this.newCheck) {
+        this.page++;
+        this.records(2);
+      } else {
+        this.page++;
+        this.records(1);
+      }
     },
     dataPopup() {
-      if (JSON.parse(localStorage.getItem("user")) != null) {
+      if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
         this.dataActive = false;
         this.dataShow = true;
+        this.addList = [];
         this.newList = [];
-        // console.log(this.addList)
+        // console.log('登录提示===')
       } else {
-        this.$router.push({ path: "/Login" });
+        // console.log('未登录提示===')
+        this.$toast('请登陆');
+        this.$emit('cardChildFn', this.loginShow);
       }
     },
     allRecords() {
-      if (JSON.parse(localStorage.getItem("user")) != null) {
+      this.newCheck = false;
+      if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
         this.dataActive = true;
-        this.reload();
+        this.addList = [];
+        this.checkDate = '筛选';
+        this.page = 1;
+        this.addList = [];
+        this.records(1);
       } else {
-        this.$router.push({ path: "/Login" });
-        // this.loginShow = true;
+        this.$toast('请登陆');
+        this.$emit('cardChildFn', this.loginShow);
       }
     },
     checkStart() {
       this.check = true;
-      this.checked = false;
       this.checkActive = true;
     },
     checkEnd() {
       this.check = false;
-      this.checked = true;
       this.checkActive = false;
     },
     data() {
@@ -201,8 +203,9 @@ export default {
     },
     // 时间确定
     thisData() {
-      // console.log('确认时间')
-      this.newRecords();
+      this.page = 1;
+      this.newCheck = true;
+      this.records(2);
       this.checkDate = this.start + "至" + this.end;
       this.dataShow = false;
     },
@@ -228,41 +231,24 @@ export default {
         this.start = this.end;
       }
     },
-    // 全部上传记录
-    records() {
-      this.loginStatus = JSON.parse(localStorage.getItem("user")).user.info;
-      var phone = JSON.parse(localStorage.getItem("user")).user.phone;
-      this.title2 = phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-      var url = this.$global_msg.records;
-      var user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
+    // 上传记录
+    records(index){
+      var url = this.$global_msg.lineCardRecords;
+      // var user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
+      var user_id = this.user_id;
       var page = this.page;
-      var page_size = this.page_size;
-      var obj = { url, user_id, page, page_size };
-      this.axios.post(url, obj).then(res => {
-        var data = res.data;
-        console.log(data)
-        if (data.data.total == null) {
-          this.addListNum = 0;
-        } else {
-          var list = data.data.records;
-          this.listNum = list.length;
-          this.count += this.listNum;
-          this.addList = this.addList.concat(list);
-          this.addListNum = data.data.total;
-          this.loading = false;
-        }
-      });
-    },
-    // 今天上传记录
-    newRecords() {
-      this.newCheck = true;
-      var url = this.$global_msg.records;
-      var user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
-      var page = this.newPage;
       var page_size = this.page_size;
       var start = this.start;
       var end = this.end;
-      var obj = { user_id, page, page_size, start, end };
+      var obj1 = { url, user_id, page, page_size };
+      var obj2 = { user_id, page, page_size, start, end };
+      var obj = '';
+      if (index==1) {
+        obj = obj1
+      }else {
+        obj = obj2
+      }
+      // console.log(obj)
       this.axios.post(url, obj).then(res => {
         var data = res.data;
         // console.log(data)
@@ -272,14 +258,34 @@ export default {
           var list = data.data.records;
           this.listNum = list.length;
           this.count += this.listNum;
-          this.newList = this.newList.concat(list);
-          this.addList = this.newList;
+          if (index==1) {
+            this.addList = this.addList.concat(list);
+            // console.log('全部列表===',this.addList)
+          }else {
+            // console.log(this.newList)
+            this.newList = this.newList.concat(list);
+            this.addList = this.newList;
+            // console.log('时间筛选===',this.addList)
+          }
           this.addListNum = data.data.total;
           this.loading = false;
-          // console.log(this.addList)
         }
       });
     },
+    // 信息查看
+    textImgPopup(path, start) {
+      // console.log(url)
+      this.textImgShow = true;
+      this.thisPath = path;
+      if(start != ''){
+        this.startAddress = start;
+      }else {
+        this.startAddress = '无';
+      }
+    },
+    imgShow(){
+      this.textImgShow = false;
+    }
   },
   computed: {
     noMore() {
@@ -289,115 +295,18 @@ export default {
       return this.loading || this.noMore;
     }
   },
-  created() {
-    // console.log(JSON.parse(localStorage.getItem('user')))
-    if (JSON.parse(localStorage.getItem("user")) != null) {
-      // this.$emit('addListNumChildFn', this.addListNum);
-      
-      this.records();
+  mounted() {
+    if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != null && JSON.parse(localStorage.getItem("user")).user.user_id != null) {
+      this.user_id = JSON.parse(localStorage.getItem("user")).user.user_id;
+      this.records(1);
     }
     this.data();
-  },
-  mounted() {
-    if (JSON.parse(localStorage.getItem("user")) != null) {
-    }else {
-      this.$router.push({path: '/'})
-    }
-    
   }
 };
 </script>
 
 <style scoped>
-.header {
-  position: relative;
-  width: 375px;
-  height: 44px;
-  line-height: 44px;
-  background: rgba(255, 255, 255, 1);
-  font-size: 16px;
-  color: rgba(51, 51, 51, 1);
-  display: flex;
-  margin: 0 auto;
-}
-.header i {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 40px;
-  background: url("../assets/add/left.png") center no-repeat;
-}
-.header div {
-  flex: 1;
-  text-align: center;
-}
-.userNews {
-  position: relative;
-  width: 375px;
-  height: 120px;
-  background: rgba(18, 165, 137, 1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 auto;
-}
-.userLogin {
-  position: absolute;
-  left: 20px;
-  top: 21px;
-  display: flex;
-  flex-direction: column;
-}
-.loginImg {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-.login-img {
-  width: 50px;
-  height: 50px;
-  background: rgba(202, 243, 235, 1);
-  border-radius: 6px;
-  border: 2px solid rgba(2, 131, 106, 1);
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.loginImg span {
-  font-size: 14px;
-  font-family: PingFangSC-Medium, PingFang SC;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 1);
-  line-height: 20px;
-  margin-left: 10px;
-}
-.cardAll {
-  text-align: left;
-  font-size: 12px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 1);
-  line-height: 17px;
-  margin-top: 22px;
-}
-.uploadCard {
-  position: absolute;
-  right: 20px;
-  font-size: 11px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 1);
-  line-height: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.uploadCard > img {
-  width: 30px;
-  height: 30px;
-}
+/*  */
 .newsStyle {
   display: flex;
   align-items: center;
@@ -405,7 +314,7 @@ export default {
   height: 40px;
   background: rgba(255, 255, 255, 1);
   margin: 0 auto;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 .newsStyle div {
   flex: 1;
@@ -430,6 +339,7 @@ export default {
   height: 435px;
   width: 375px;
   margin: 0 auto;
+  margin-top: 4px;
 }
 .imgNews > ul > li {
   width: 350px;
@@ -441,7 +351,10 @@ export default {
   border-radius: 4px;
   border-bottom: 1px solid #000;
 }
+/* *** */
+/*  */
 .new-card {
+  /* height: 50px; */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -464,6 +377,7 @@ export default {
   font-weight: 400;
   color: rgba(51, 51, 51, 1);
 }
+/* *** */
 .img-card {
   width: 50px;
   height: 50px;
@@ -474,6 +388,7 @@ export default {
   width: 50px;
   height: 50px;
 }
+/*  */
 .noneNews {
   text-align: center;
   font-size: 14px;
@@ -481,21 +396,6 @@ export default {
   font-weight: 400;
   color: rgba(153, 153, 153, 1);
   line-height: 20px;
-}
-.big-imgCard {
-  width: 273px;
-}
-.big-imgCard img {
-  width: 100%;
-}
-.bigImg {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-.bigImg img {
-  width: 100%;
 }
 .datatime {
   width: 375px;
@@ -515,31 +415,36 @@ export default {
   color: #1989fa;
   border-bottom: 1px solid #1989fa !important;
 }
-</style>
-
-<style>
-/**
- *
- *所有组件样式修改
- *
- */
-/* 弹出框 */
-.van-popup--center.van-popup--round {
-  border-radius: 6px !important;
+/* *** */
+/* 信息查看 */
+.news-form-header{
+  font-size:16px;
+  padding: 14px 0 6px;
 }
-.van-picker__cancel,
-.van-picker__confirm {
-  flex: 1;
-  font-size: 0.5rem !important;
+.news-form-img{
+  width: 233px;
+  height: 310px;
+  margin: 0 auto;
 }
-
-/* 图片查看器 */
-.viewer-toolbar .viewer-one-to-one,
-.viewer-prev,
-.viewer-next,
-.viewer-play,
-.viewer-flip-horizontal,
-.viewer-flip-vertical {
-  display: none !important;
+.news-form-img img{
+  width: 233px;
+  height: 310px;
+}
+.news-form-section{
+  font-size: 14px;
+  text-align: left;
+  margin: 16px 10px 10px;
+}
+.form-section-first{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.form-section-address{
+  width: 200px;
+  text-align: right;
+  /* text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap; */
 }
 </style>
