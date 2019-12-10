@@ -39,6 +39,9 @@ const lineCardUpload = 'Web/ThirdUploadWithData/upload'
 // 上报名片带数据的记录
 const lineCardRecords = 'Web/ThirdUploadWithData/records'
 
+// 获取省市信息
+const getCodeByFullNameForAmap = '/Tool/getCodeByFullNameForAmap'
+
 
 if (window.location.host == 'card.a56999.com') {
   baseUrl = 'https://aybapi.a56999.com'
@@ -59,5 +62,6 @@ export default {
   detail,
   lineRecords,
   lineCardUpload,
-  lineCardRecords
+  lineCardRecords,
+  getCodeByFullNameForAmap
 }

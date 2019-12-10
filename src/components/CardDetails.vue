@@ -120,10 +120,7 @@ export default {
     },
     dataPopup() {
       if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
-        this.dataActive = false;
         this.dataShow = true;
-        this.addList = [];
-        this.newList = [];
       } else {
         this.$toast('请登陆');
         this.$emit('cardChildFn', this.loginShow);
@@ -174,6 +171,9 @@ export default {
       // this.newCheck = true
       this.page = 1;
       this.newCheck = true;
+      this.dataActive = false;
+      this.addList = [];
+      this.newList = [];
       this.records(2);
       this.checkDate = this.start + "至" + this.end;
       this.dataShow = false;
@@ -378,6 +378,7 @@ export default {
 .van-popup--center.van-popup--round {
   border-radius: 6px !important;
 }
+/* 时间选择器 */
 .van-picker__cancel,
 .van-picker__confirm {
   flex: 1;

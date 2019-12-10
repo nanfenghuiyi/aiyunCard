@@ -12,13 +12,9 @@
         ref="upload"
         action=this.$global_msg.baseUrl
         list-type="picture-card"
-        multiple
         accept="image/*"
-        :on-success="handleSuccess"
-        :on-progress='uploaded'
+        :show-file-list="false"
         :on-change="handleChange"
-        :on-remove="handleRemove"
-        :limit="maxlimit"
         :http-request="uploadImg"
         :auto-upload="true"
         :class="{hide:hideUpload}"
@@ -27,116 +23,104 @@
           <div class="el-icon-plus-size">选择名片</div>
         </i>
       </el-upload>
+      <!-- 自定义图片 -->
+      <div>
+        <van-grid :border="true" :column-num="3" :gutter="10" :square="true">
+          <van-grid-item v-for="(item, index) of imgList" :key="index">
+            <van-image :src="item.path">
+            </van-image>
+            <van-icon @click='vanGrid(index)' name="close close-img" />
+          </van-grid-item>
+        </van-grid>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import SparkMD5 from 'spark-md5'
 
 export default {
   inject: ["reload"],
   data() {
     return {
-      user_id: "",
+      imgList: [],
+      user_id: '',
+      md5_sign: '',
       type: 10,
       city_code: "028",
-      paths: "",
+      paths: '',
       fullscreenLoading: false,
       base: '',
       uid:null,    //图片唯一的标识id
-      maxlimit: 10, // 最大上传数量
+      maxlimit: 9, // 最大上传数量
       hideUpload: false, // 到达最大数量隐藏
-      // urlLists: [],
-      tempFiles: [],
       uploadPercent: 0, // 上传成功的张数
       tempFileNum: 0, // 上传的张数
     };
   },
   methods: {
-    handleSuccess(response, file, fileList){
-      // console.log('handleSuccess===',file)
-      // this.urlLists.push(file.url)
-    },
-    uploaded(event, file, fileList){
-      this.urlList = fileList
-      this.uid = file.uid
-    },
     handleChange(file,fileList) {
       // 选择的图片达到指定数量，阻止添加图片
-      this.hideUpload = fileList.length >= this.maxlimit;
-      // console.log('handleChange===',file)
-      // file.url= this.base
-    },
-    // 图片移除后
-    handleRemove(file,fileList) {
-      for(var i = 0 ; i < this.tempFiles.length; i++) {
-        var arr = this.tempFiles[i].split(',');
-        if (arr[0] == file.uid) {
-          this.tempFiles.splice(i,1);
-        }
-      }
-      this.uploadPercent--;
-      this.tempFileNum--;
-      // 选择的图片小于指定数量，允许添加图片
-      this.hideUpload = fileList.length >= this.maxlimit;
+      // this.hideUpload = this.imgList.length >= this.maxlimit;
     },
     // 确认提交
     uplaodClick() {
       var user_id = this.user_id;
       this.paths = '';
-      // console.log(this.tempFiles);
-      if (this.tempFiles.length>0) {
-        for(var i = 0 ; i < this.tempFiles.length; i++) {
-            var arr = this.tempFiles[i].split(',');
-            if (i == (this.tempFiles.length - 1)) {
-              this.paths += (arr[1])
-            } else {
-              this.paths += (arr[1] + ',')
-            }
-          }
-        }
-        var paths = this.paths;
+      if (this.imgList.length>0) {
+        var paths = this.imgList;
         var city_code = this.city_code;
         var url = this.$global_msg.upload;
         var obj = { user_id, paths, city_code };
-        // console.log(this.uploadPercent,'====',this.tempFiles.length)
-        if (this.uploadPercent == this.tempFiles.length) {
+        // console.log(this.uploadPercent,'====',this.imgList.length)
+        if (this.uploadPercent == this.imgList.length) {
           this.fullscreenLoading = false;
           this.axios.post(url, obj).then(res => {
             // console.log(res);
             var msg = res.data.msg;
             var status = res.data.status;
-            // 显示上传按钮
-            this.hideUpload = false;
-            this.$toast(msg);
-            this.tempFiles = [];
-            this.tempFileNum = 0;
-            this.uploadPercent = 0;
-            this.$refs.upload.clearFiles();
+            // if (status==1) {
+              // 显示上传按钮
+              this.hideUpload = false;
+              this.$toast(msg);
+              this.imgList = [];
+              this.tempFileNum = 0;
+              this.uploadPercent = 0;
+              this.$refs.upload.clearFiles();
           })
         } else if(this.uploadPercent == 0){
           this.$toast("请选择图片");
         }else{
-          // console.log(this.uploadPercent,'====',this.tempFiles.length)
+          this.fullscreenLoading = false;
           this.$toast("图片正在上传，请稍后");
+        }
+      }else {
+        this.$toast("请选择图片");
       }
+    },
+    // 图片移除
+    vanGrid(index){
+      this.imgList.splice(index,1)
+      this.uploadPercent--;
+      this.tempFileNum--;
+      this.hideUpload = this.imgList.length >= this.maxlimit;
     },
     // 重新选择
     clearCheck() {
-      this.tempFiles = []; // 清除列表中的地址
+      this.imgList = []; // 清除列表中的地址
       this.uploadPercent = 0;
       this.tempFileNum = 0;
-      // this.urlLists = []; // 列表清空
-      this.$refs.upload.clearFiles()
+      this.$refs.upload.clearFiles();
       this.hideUpload = false;
     },
     // 图片压缩打包
     async uploadImg(options) {
+      // console.log(options)
       var that = this;
       that.fullscreenLoading = true;
       // 获取文件对象
       let file = options.file;
-      // console.log(file)
       //判断图片类型
       if (file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/JPG") {
         var isJPG = true;
@@ -159,8 +143,18 @@ export default {
         reader.readAsDataURL(file);
       }
       reader.onload = e => {
+        // console.log('转换后===',that.md5_sign)
         let base64Str = reader.result.split(",")[1];
         img.src = e.target.result;
+        var spark = new SparkMD5(); //创建md5对象（基于SparkMD5）
+        that.md5_sign = spark.appendBinary(img.src).end()
+        for (var i = 0; i < that.imgList.length; i++) {
+          if (that.imgList[i].md5_sign == that.md5_sign) {
+            that.$toast('请勿选择重复图片');
+            that.fullscreenLoading = false;
+            return
+          }
+        }
         // base64地址图片加载完毕后执行
         img.onload = function() {
           // 默认按比例压缩
@@ -198,7 +192,8 @@ export default {
           // console.log(base64)
           var user_id = that.user_id;
           var type = that.type;
-          var obj = { user_id, base64, type };
+          var md5_sign = that.md5_sign
+          var obj = { user_id, base64, md5_sign, type };
           // console.log(obj)
           that.tempFileNum++;
           // 定义上传进度
@@ -226,10 +221,18 @@ export default {
           };
           that.axios.post("/Tool/upload", obj, progress)
             .then(res => {
-              // console.log(res)
-              // console.log(file.uid);
-              that.tempFiles.push(file.uid + ',' + res.data.data);
-              // console.log(that.tempFiles);
+              // console.log('/Tool/upload===',res.data)
+              var data = res.data;
+              if (data.status == 0) {
+                that.uploadPercent--;
+                that.tempFileNum--;
+                that.fullscreenLoading = false;
+                that.$toast(data.msg)
+              }else{
+                // that.fullscreenLoading = false;
+                that.imgList.push(data.data);
+                that.hideUpload = that.imgList.length >= that.maxlimit;
+              }
             })
             .catch(err => {
               console.log(err)
@@ -289,8 +292,21 @@ export default {
   color: rgba(255, 255, 255, 1);
   background: rgba(18, 165, 137, 1);
 }
+/* 自定义图片 */
+.van-image{
+  height: 100%;
+}
+.van-icon{
+  font-size: 18px;
+}
+.close-img{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
 </style>
 <style>
+/* 上传组件 */
 .el-upload--picture-card {
   height: 100px !important;
   width: 100px !important;

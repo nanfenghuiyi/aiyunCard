@@ -196,10 +196,7 @@ export default {
     },
     dataPopup() {
       if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
-        this.dataActive = false;
         this.dataShow = true;
-        this.addList = [];
-        this.newList = [];
       } else {
         this.$toast('请登陆');
         this.$emit('cardChildFn', this.loginShow);
@@ -258,6 +255,9 @@ export default {
     thisData() {
       this.page = 1;
       this.newCheck = true;
+      this.dataActive = false;
+      this.addList = [];
+      this.newList = [];
       this.records(2);
       this.checkDate = this.start + "至" + this.end;
       this.dataShow = false;

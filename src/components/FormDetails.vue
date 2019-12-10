@@ -17,7 +17,7 @@
               <div></div>
               <span v-text="item.add_time"></span>
             </div>
-            <div class="img-card" @click="textImgPopup(item.path,item.start)">
+            <div class="img-card" @click="textImgPopup(item.path,item.start,item.end)">
               <img v-lazy="item.path" alt class="images" />
             </div>
           </div>
@@ -71,8 +71,8 @@
         <div class="news-form-section">
           <div>信息补充：</div>
           <div class="form-section-first">
-            <div>始发站</div>
-            <div class="form-section-address" v-text="startAddress"></div>
+            <div v-text="textAddress[addressIndex]"></div>
+            <div class="form-section-address" v-text="address"></div>
           </div>
         </div>
       </van-popup>
@@ -119,7 +119,9 @@ export default {
       loginShow: true, // 登陆组件显示
       textImgShow: false, // 信息查看
       thisPath: '', // 当前图片URL
-      startAddress: '', // 始发站
+      textAddress: ['始发站', '终点站'],
+      addressIndex: 0,
+      address: '', // 车站
     };
   },
   components: {
@@ -140,10 +142,7 @@ export default {
     },
     dataPopup() {
       if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
-        this.dataActive = false;
         this.dataShow = true;
-        this.addList = [];
-        this.newList = [];
         // console.log('登录提示===')
       } else {
         // console.log('未登录提示===')
@@ -205,6 +204,9 @@ export default {
     thisData() {
       this.page = 1;
       this.newCheck = true;
+      this.dataActive = false;
+      this.addList = [];
+      this.newList = [];
       this.records(2);
       this.checkDate = this.start + "至" + this.end;
       this.dataShow = false;
@@ -251,7 +253,7 @@ export default {
       // console.log(obj)
       this.axios.post(url, obj).then(res => {
         var data = res.data;
-        // console.log(data)
+        console.log(data)
         if (data.data.total == null) {
           this.addListNum = 0;
         } else {
@@ -273,14 +275,16 @@ export default {
       });
     },
     // 信息查看
-    textImgPopup(path, start) {
+    textImgPopup(path, start, end) {
       // console.log(url)
       this.textImgShow = true;
       this.thisPath = path;
       if(start != ''){
-        this.startAddress = start;
-      }else {
-        this.startAddress = '无';
+        this.address = start;
+        this.addressIndex = 0;
+      }else if(end != ''){
+        this.address = end;
+        this.addressIndex = 1;
       }
     },
     imgShow(){
