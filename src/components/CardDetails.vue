@@ -17,8 +17,8 @@
               <div></div>
               <span v-text="item.add_time"></span>
             </div>
-            <div class="img-card" v-viewer>
-              <img v-lazy="item.path" alt class="images" />
+            <div class="img-card">
+              <img v-lazy="item.path[0]" alt class="images" @click="imgShow(item.path)"/>
             </div>
           </div>
         </li>
@@ -61,6 +61,16 @@
         </div>
       </van-popup>
     </div>
+    <!-- 大图 -->
+    <div>
+      <van-image-preview
+        v-model="bigShow"
+        :images="path"
+        @change="onChange"
+        :show-indicators="true"
+      >
+      </van-image-preview>
+    </div>
   </div>
 </template>
 
@@ -100,6 +110,9 @@ export default {
       end: "", // 结束时间
       checkActive: true,
       loginShow: true, // 登陆组件显示
+      // 大图显示
+      bigShow: false,
+      path: [],
     };
   },
   components: {
@@ -237,6 +250,16 @@ export default {
           this.loading = false;
         }
       });
+    },
+    // 图片放大显示
+    imgShow(path) {
+      console.log(path)
+      this.path = path
+      // this.lineShow = false;
+      this.bigShow = true;
+    },
+    onChange(index) {
+      this.index = index;
     },
   },
   computed: {

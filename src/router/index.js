@@ -16,13 +16,13 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
-    // component: resolve => require(['../views/Home.vue'], resolve)
+    // component: resolve => require(['@/views/Home.vue'], resolve)
   },
   {
     path: '/upload',
     name: 'upload',
     component: Upload,
-    // component: resolve => require(['../views/Upload.vue'], resolve)
+    // component: resolve => require(['@/views/Upload.vue'], resolve)
   },
 ]
 

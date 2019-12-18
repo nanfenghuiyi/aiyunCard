@@ -1,21 +1,21 @@
 <template>
   <div class="container">
     <div class="container-header">
-      <div class="header-user" @click="isLogin">
-        <div class="header-login">
-        <div class="login-img">
-          <img src="../assets/home/user.png" alt />
+      <div class="header-user">
+        <div class="header-login" @click="isLogin">
+          <div class="login-img">
+            <img src="../assets/home/user.png" alt />
+          </div>
+          <div class="login-phone">
+            <span v-text="title"></span>
+          </div>
         </div>
-        <div class="login-phone">
-          <span v-text="title"></span>
+        <div>
+          <div class="uploadCard" @click="getAdd">
+            <img src="../assets/home/tianjia.png" alt />
+            点击上传信息
+          </div>
         </div>
-      </div>
-      <div>
-        <div class="uploadCard" @click="getAdd">
-          <img src="../assets/home/tianjia.png" alt />
-          点击上传信息
-        </div>
-      </div>
       </div>
     </div>
     <!-- tab标签 -->

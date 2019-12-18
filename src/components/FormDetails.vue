@@ -18,7 +18,7 @@
               <span v-text="item.add_time"></span>
             </div>
             <div class="img-card" @click="textImgPopup(item.path,item.start,item.end)">
-              <img v-lazy="item.path" alt class="images" />
+              <img v-lazy="item.path[0]" alt class="images" />
             </div>
           </div>
         </li>
@@ -71,8 +71,12 @@
         <div class="news-form-section">
           <div>信息补充：</div>
           <div class="form-section-first">
-            <div v-text="textAddress[addressIndex]"></div>
-            <div class="form-section-address" v-text="address"></div>
+            <div>始发站</div>
+            <div class="form-section-address" v-text="startAddress"></div>
+          </div>
+          <div class="form-section-first">
+            <div>终点站</div>
+            <div class="form-section-address" v-text="endAddress"></div>
           </div>
         </div>
       </van-popup>
@@ -119,9 +123,8 @@ export default {
       loginShow: true, // 登陆组件显示
       textImgShow: false, // 信息查看
       thisPath: '', // 当前图片URL
-      textAddress: ['始发站', '终点站'],
-      addressIndex: 0,
-      address: '', // 车站
+      startAddress: '', // 始发站
+      endAddress: '', // 终点站
     };
   },
   components: {
@@ -279,12 +282,15 @@ export default {
       // console.log(url)
       this.textImgShow = true;
       this.thisPath = path;
-      if(start != ''){
-        this.address = start;
-        this.addressIndex = 0;
-      }else if(end != ''){
-        this.address = end;
-        this.addressIndex = 1;
+      if(start != '' && start != null){
+        this.startAddress = start;
+      }else {
+        this.startAddress = '无'
+      }
+      if(end != '' && end != null){
+        this.endAddress = end;
+      }else {
+        this.endAddress = '无'
       }
     },
     imgShow(){

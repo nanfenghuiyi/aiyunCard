@@ -160,7 +160,7 @@ export default {
         var end = this.setAddress + '-' + this.setEnd;
         obj = { user_id, path, end};
       }
-      console.log(obj)
+      // console.log(obj)
       if (this.uploadPercent == 100) {
         this.axios.post(url, obj).then(res => {
           // console.log(res);
@@ -175,6 +175,7 @@ export default {
           this.start = '';
           this.setAddress = ''; 
           this.setStart = ''; 
+          this.setEnd = ''; 
         })
       } else if(this.uploadPercent == 0){
         this.$toast("请选择图片");
@@ -208,6 +209,7 @@ export default {
       // console.log(file.size / 1024 / 1024);
       if (!isJPG) {
         this.$message.error("上传产品图片只能是 JPG/PNG/JPEG 格式!");
+        that.fullscreenLoading = false;
         return
       }
       // 创建一个HTML5的FileReader对象
