@@ -6,6 +6,10 @@
         :class="{textActive:dataActive==true, flexActive:dataActive==false}"
         @click="allRecords"
       >全部</div>
+      <div class="newsStyle-border" 
+        :class="{flexActive:dataActive==false}"
+        @click="getStatistic"
+      >统计</div>
       <div :class="{textActive:dataActive==false}" @click="dataPopup" v-text="checkDate"></div>
     </div>
     <div>名片信息： {{addListNum}}条</div>
@@ -17,6 +21,7 @@
               <div></div>
               <span v-text="item.add_time"></span>
             </div>
+            <div v-text="item.status_str"></div>
             <div class="img-card">
               <img v-lazy="item.path[0]" alt class="images" @click="imgShow(item.path)"/>
             </div>
@@ -121,6 +126,15 @@ export default {
     logout
   },
   methods: {
+    // 统计跳转
+    getStatistic() {
+      if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
+        this.$router.push({ path: "/Statistic", query: {id: "1"} });
+      } else {
+        this.$toast('请登录');
+        this.$emit('cardChildFn', this.loginShow);
+      }
+    },
     load() {
       this.loading = true;
       if (this.newCheck) {

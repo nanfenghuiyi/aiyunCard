@@ -6,6 +6,10 @@
         :class="{textActive:dataActive==true, flexActive:dataActive==false}"
         @click="allRecords"
       >全部</div>
+      <div class="newsStyle-border" 
+        :class="{flexActive:dataActive==false}"
+        @click="getStatistic"
+      >统计</div>
       <div :class="{textActive:dataActive==false}" @click="dataPopup" v-text="checkDate"></div>
     </div>
     <div>线路信息： {{addListNum}}条</div>
@@ -184,6 +188,15 @@ export default {
     logout
   },
   methods: {
+    // 统计跳转
+    getStatistic() {
+      if (JSON.parse(localStorage.getItem("user")) != null && JSON.parse(localStorage.getItem("user")).user != "") {
+        this.$router.push({ path: "/Statistic", query: {id: "3"} });
+      } else {
+        this.$toast('请登录');
+        this.$emit('cardChildFn', this.loginShow);
+      }
+    },
     onload() {
       this.loading = true;
       if (this.newCheck) {

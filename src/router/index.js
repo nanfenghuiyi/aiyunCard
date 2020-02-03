@@ -24,6 +24,12 @@ const routes = [
     component: Upload,
     // component: resolve => require(['@/views/Upload.vue'], resolve)
   },
+  {
+    path: '/Statistic',
+    name: 'Statistic',
+    // component: Upload,
+    component: resolve => require(['@/components/Statistic.vue'], resolve)
+  },
 ]
 
 const router = new VueRouter({
