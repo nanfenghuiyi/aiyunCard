@@ -31,16 +31,22 @@ const getCities = "/Tool/getCities"
 const detail = 'web/ThirdReportBusLine/detail'
 
 // 上报的记录
-const lineRecords= 'web/ThirdReportBusLine/records'
+const lineRecords= '/web/ThirdReportBusLine/records'
 
 // 上报名片带数据
-const lineCardUpload = 'Web/ThirdUploadWithData/upload'
+const lineCardUpload = '/Web/ThirdUploadWithData/upload'
 
 // 上报名片带数据的记录
-const lineCardRecords = 'Web/ThirdUploadWithData/records'
+const lineCardRecords = '/Web/ThirdUploadWithData/records'
 
 // 获取省市信息
 const getCodeByFullNameForAmap = '/Tool/getCodeByFullNameForAmap'
+
+// 名片统计列表
+const cardStatistics = '/Web/BusUploadStatistics/cardStatistics'
+
+// '表格'和文字上传统计列表
+const textStatistics = '/Web/BusUploadStatistics/textStatistics'
 
 
 if (window.location.host == 'card.a56999.com') {
@@ -63,5 +69,8 @@ export default {
   lineRecords,
   lineCardUpload,
   lineCardRecords,
-  getCodeByFullNameForAmap
+  getCodeByFullNameForAmap,
+  cardStatistics,
+  textStatistics
+
 }

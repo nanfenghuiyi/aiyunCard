@@ -1,0 +1,197 @@
+/*  */
+.newsStyle {
+  display: flex;
+  align-items: center;
+  width: 375px;
+  height: 40px;
+  background: rgba(255, 255, 255, 1);
+  margin: 0 auto;
+  margin-bottom: 4px;
+}
+
+.newsStyle div {
+  flex: 1;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(151, 151, 151, 1);
+  line-height: 20px;
+}
+
+.flexActive {
+  flex: 0.5 !important;
+}
+
+.textActive {
+  color: rgba(18, 165, 137, 1) !important;
+}
+
+.newsStyle-border {
+  border-right: 1px solid #979797;
+}
+
+.imgNews {
+  overflow: auto;
+  height: 435px;
+  width: 375px;
+  margin: 0 auto;
+  margin-top: 4px;
+}
+
+.imgNews>ul>li {
+  width: 350px;
+  height: 70px;
+  line-height: 70px;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 4px;
+  border-bottom: 1px solid #000;
+}
+
+/* *** */
+/* *** */
+.bus-line-ul {
+  /* border:1px solid red; */
+  width: 120px;
+  text-align: left;
+}
+
+.bus-line {
+  display: flex;
+}
+
+.text-details-span {
+  width: 40px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+/*  */
+.new-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.new-time {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.new-time div {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(93, 179, 129, 1);
+  margin-right: 14px;
+}
+
+.new-time span {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(51, 51, 51, 1);
+}
+
+/* *** */
+.img-card {
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
+  margin-right: 25px;
+}
+
+.img-card img {
+  width: 50px;
+  height: 50px;
+}
+
+/*  */
+.noneNews {
+  text-align: center;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(153, 153, 153, 1);
+  line-height: 20px;
+}
+
+.datatime {
+  width: 375px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 16px;
+  padding-top: 30px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.datatime p {
+  width: 150px;
+  border-bottom: 1px solid #888;
+}
+
+.activeDate {
+  color: #1989fa;
+  border-bottom: 1px solid #1989fa !important;
+}
+
+/* *** */
+/* 信息查看 */
+.news-form-header {
+  font-size: 16px;
+  padding: 14px 0 6px;
+}
+
+.news-form-img {
+  width: 233px;
+  height: 310px;
+  margin: 0 auto;
+}
+
+.news-form-img img {
+  width: 233px;
+  height: 310px;
+}
+
+.news-form-section {
+  font-size: 14px;
+  text-align: left;
+  margin: 16px 10px 10px;
+}
+
+.form-section-first {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.form-section-address {
+  width: 200px;
+  text-align: right;
+  /* text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap; */
+}
+
+/* 路线详情 */
+.bus-line-ul>li {
+  line-height: 20px;
+}
+
+.bus-details {
+  font-size: 16px;
+  padding: 14px 0 25px;
+}
+
+.bus-details-style {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bus-details-style>div {
+  padding: 10px 15px;
+}

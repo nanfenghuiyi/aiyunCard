@@ -14,7 +14,7 @@ import 'lib-flexible'
 import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
 // 懒加载
-import VueLazyload from "vue-lazyload"
+// import VueLazyload from "vue-lazyload"
 
 Vue.use(Vuex)
 Vue.use(ElementUI)
@@ -22,9 +22,9 @@ Vue.use(Vant)
 Vue.use(Viewer)
 
 // 或者添加VueLazyload 选项
-Vue.use(VueLazyload, {
-  loading: "/loading.png"
-})
+// Vue.use(VueLazyload, {
+//   loading: "./loading.png"
+// })
 
 Vue.use(Viewer, {
   defaultOptions: {

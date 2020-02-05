@@ -23,7 +23,14 @@
             </div>
             <div v-text="item.status_str"></div>
             <div class="img-card">
-              <img v-lazy="item.path[0]" alt class="images" @click="imgShow(item.path)"/>
+              <!-- <img v-lazy="item.path[0]" alt class="images" @click="imgShow(item.path)"/> -->
+              <div class="demo-image__lazy" @click="imgShow(item.path)">
+                <el-image :src="item.path[0]" lazy>
+                  <div slot="placeholder" class="image-slot">
+                    <i class="el-icon-loading"></i>
+                  </div>
+                </el-image>
+              </div>
             </div>
           </div>
         </li>
@@ -295,114 +302,8 @@ export default {
 </script>
 
 <style scoped>
-/*  */
-.newsStyle {
-  display: flex;
-  align-items: center;
-  width: 375px;
-  height: 40px;
-  background: rgba(255, 255, 255, 1);
-  margin: 0 auto;
-  margin-bottom: 4px;
-}
-.newsStyle div {
-  flex: 1;
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: rgba(151, 151, 151, 1);
-  line-height: 20px;
-}
-.flexActive {
-  flex: 0.5 !important;
-}
-.textActive {
-  color: rgba(18, 165, 137, 1) !important;
-}
-.newsStyle-border {
-  border-right: 1px solid #979797;
-}
-.imgNews {
-  overflow: auto;
-  height: 435px;
-  width: 375px;
-  margin: 0 auto;
-  margin-top: 4px;
-}
-.imgNews > ul > li {
-  width: 350px;
-  height: 70px;
-  line-height: 70px;
-  margin: 0 auto;
-  margin-bottom: 10px;
-  background: rgba(255, 255, 255, 1);
-  border-radius: 4px;
-  border-bottom: 1px solid #000;
-}
-/* *** */
-/*  */
-.new-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.new-time {
-  display: flex;
-  align-items: center;
-  margin-left: 20px;
-}
-.new-time div {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: rgba(93, 179, 129, 1);
-  margin-right: 14px;
-}
-.new-time span {
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: rgba(51, 51, 51, 1);
-}
-/* *** */
-.img-card {
-  width: 50px;
-  height: 50px;
-  box-sizing: border-box;
-  margin-right: 25px;
-}
-.img-card img {
-  width: 50px;
-  height: 50px;
-}
-/*  */
-.noneNews {
-  text-align: center;
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: rgba(153, 153, 153, 1);
-  line-height: 20px;
-}
-.datatime {
-  width: 375px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 16px;
-  padding-top: 30px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-}
-.datatime p {
-  width: 150px;
-  border-bottom: 1px solid #888;
-}
-.activeDate {
-  color: #1989fa;
-  border-bottom: 1px solid #1989fa !important;
-}
-/* *** */
+@import "../styles/details.css";
+
 </style>
 
 <style>
@@ -430,5 +331,19 @@ export default {
 .viewer-flip-horizontal,
 .viewer-flip-vertical {
   display: none !important;
+}
+/* 图片懒加载 */
+.el-image {
+  height: 100%;
+  font-size: 34px;
+}
+.image-slot {
+  margin-top: -10px;
+}
+..el-image__error{
+  font-size: 12px;
+}
+.demo-image__lazy {
+  height: 100%;
 }
 </style>

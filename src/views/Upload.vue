@@ -33,9 +33,6 @@ export default {
     }
   },
   components: {addcard,addform,addtext},
-  props: {},
-  watch: {},
-  computed: {},
   methods: {
     goBack() {
       this.$router.go(-1);
