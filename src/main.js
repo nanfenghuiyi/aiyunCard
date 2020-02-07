@@ -4,9 +4,11 @@ import router from './router'
 import store from './store'
 import axios from './axios'
 import Vuex from 'vuex'
-import ElementUI from 'element-ui'
+// import ElementUI from 'element-ui'
+import element from './js/element'
+import vant from './js/vant'
 import 'element-ui/lib/theme-chalk/index.css'
-import Vant from 'vant'
+// import Vant from 'vant'
 import  'vant/lib/index.css'
 import global_msg from "./js/global"
 import 'lib-flexible'
@@ -17,8 +19,10 @@ import Viewer from 'v-viewer'
 // import VueLazyload from "vue-lazyload"
 
 Vue.use(Vuex)
-Vue.use(ElementUI)
-Vue.use(Vant)
+// Vue.use(ElementUI)
+// Vue.use(Vant)
+Vue.use(element)
+Vue.use(vant)
 Vue.use(Viewer)
 
 // 或者添加VueLazyload 选项
