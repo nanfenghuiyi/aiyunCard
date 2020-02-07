@@ -276,25 +276,29 @@ export default {
       }
       // console.log(obj)
       this.axios.post(url, obj).then(res => {
-        var data = res.data;
-        console.log(data)
-        if (data.data.total == null) {
-          this.addListNum = 0;
-        } else {
-          var list = data.data.records;
-          this.listNum = list.length;
-          this.count += this.listNum;
-          if (index==1) {
-            this.addList = this.addList.concat(list);
-            // console.log('全部列表===',this.addList)
-          }else {
-            // console.log(this.newList)
-            this.newList = this.newList.concat(list);
-            this.addList = this.newList;
-            // console.log('时间筛选===',this.addList)
+        if (res != null) {
+          var data = res.data;
+          console.log(data)
+          if (data.data != null) {
+            if (data.data.total == null) {
+              this.addListNum = 0;
+            } else {
+              var list = data.data.records;
+              this.listNum = list.length;
+              this.count += this.listNum;
+              if (index==1) {
+                this.addList = this.addList.concat(list);
+                // console.log('全部列表===',this.addList)
+              }else {
+                // console.log(this.newList)
+                this.newList = this.newList.concat(list);
+                this.addList = this.newList;
+                // console.log('时间筛选===',this.addList)
+              }
+              this.addListNum = data.data.total;
+              this.loading = false;
+            }
           }
-          this.addListNum = data.data.total;
-          this.loading = false;
         }
       });
     },

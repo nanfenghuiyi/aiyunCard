@@ -2,7 +2,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   // 移除console
-  configureWebpack: {
+  /* configureWebpack: {
     optimization: {
       minimizer: [
         new TerserPlugin({
@@ -19,6 +19,14 @@ module.exports = {
         }),
       ]
     }
+  }, */
+  configureWebpack: config => {
+    if (process.env.outputDir !== 'test') {
+      config.optimization.minimizer[0].options.terserOptions.compress.warnings = false
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_debugger = true
+      config.optimization.minimizer[0].options.terserOptions.compress.pure_funcs = ['console.log']
+    }
   },
   // baseUrl从 Vue CLI 3.3 起已弃用，请使用publicPath
   // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上，例如 https://www.my-app.com/。
@@ -28,7 +36,8 @@ module.exports = {
   // 当运行 vue-cli-service build 时生成的生产环境构建文件的目录。
   // 注意目标目录在构建之前会被清除 (构建时传入 --no-clean 可关闭该行为)。
   // 默认值'dist'
-  outputDir: "dist",
+  // outputDir: "dist",
+  outputDir: process.env.outputDir,
   // 放置生成的静态资源 (js、css、img、fonts) 的目录(相对于outputDir目录)。
   // 默认值''
   // assetsDir: "assets",
