@@ -148,7 +148,7 @@ export default {
         }else{
           this.clearCheck();
           this.fullscreenLoading = false;
-          this.$toast("图片正在上传，请稍后");
+          this.$toast("名片上传异常，请重试");
         }
       }else {
         this.fullscreenLoading = false;
