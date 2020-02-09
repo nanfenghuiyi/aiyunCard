@@ -119,33 +119,34 @@ export default {
         var url = this.$global_msg.upload;
         var obj = { user_id, paths, city_code };
         console.log('uplaodClick===',obj)
-        // console.log(this.uploadPercent,'====',this.imgList.length)
+        console.log(this.uploadPercent,'====',this.imgList.length)
         if (this.uploadPercent == 2) {
           this.axios.post(url, obj).then(res => {
             // console.log(res);
             var msg = res.data.msg;
             var status = res.data.status;
             // if (status==1) {
-              // 显示上传按钮
-              this.hideUpload = false;
-              this.isHideUpload = false;
-              this.$toast(msg);
-              // 列表清空
-              this.imgList = [];
-              this.isImgList = [];
-              this.hideUpload = false;
-              this.isHideUpload = false;
-              this.imgListShow = false;
-              this.isImgListShow = false;
-              this.tempFileNum = 0;
-              this.uploadPercent = 0;
-              this.$refs.upload.clearFiles();
-              this.fullscreenLoading = false;
+            // 显示上传按钮
+            this.hideUpload = false;
+            this.isHideUpload = false;
+            this.$toast(msg);
+            // 列表清空
+            this.imgList = [];
+            this.isImgList = [];
+            this.hideUpload = false;
+            this.isHideUpload = false;
+            this.imgListShow = false;
+            this.isImgListShow = false;
+            this.tempFileNum = 0;
+            this.uploadPercent = 0;
+            this.$refs.upload.clearFiles();
+            this.fullscreenLoading = false;
           })
         } else if(this.uploadPercent == 0){
           this.fullscreenLoading = false;
           this.$toast("请选择图片");
         }else{
+          this.clearCheck();
           this.fullscreenLoading = false;
           this.$toast("图片正在上传，请稍后");
         }

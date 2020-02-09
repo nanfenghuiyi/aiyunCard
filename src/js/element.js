@@ -15,7 +15,11 @@ import {
   InfiniteScroll,
   Table,
   tableColumn,
-  Pagination
+  Pagination,
+  Upload,
+  DropdownItem,
+  Dropdown,
+  DropdownMenu
 } from 'element-ui';
 
 const element = {
@@ -36,6 +40,10 @@ const element = {
       .use(Table)
       .use(tableColumn)
       .use(Pagination)
+      .use(Upload)
+      .use(DropdownItem)
+      .use(Dropdown)
+      .use(DropdownMenu)
   }
 }
 export default element
