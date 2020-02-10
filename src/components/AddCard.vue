@@ -131,15 +131,7 @@ export default {
             this.isHideUpload = false;
             this.$toast(msg);
             // 列表清空
-            this.imgList = [];
-            this.isImgList = [];
-            this.hideUpload = false;
-            this.isHideUpload = false;
-            this.imgListShow = false;
-            this.isImgListShow = false;
-            this.tempFileNum = 0;
-            this.uploadPercent = 0;
-            this.$refs.upload.clearFiles();
+            this.clearCheck();
             this.fullscreenLoading = false;
           })
         } else if(this.uploadPercent == 0){
@@ -253,7 +245,9 @@ export default {
                   ((progressEvent.loaded / progressEvent.total) * 100).toFixed(0)
                 );
                 if(val==100) {// 上传进度
-                  that.uploadPercent++
+                  that.uploadPercent++;
+                }else {
+                  console.log("上传进度未完成");
                 }
                 /* if (that.uploadPercent == that.tempFileNum) {
                   that.$toast('图片加载完成')
@@ -326,6 +320,7 @@ export default {
               that.isImgListShow = true;
             }
           }
+          console.log("323=== ",  that.uploadPercent);
           that.fullscreenLoading = false;
         })
         .catch(err => {

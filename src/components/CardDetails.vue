@@ -6,10 +6,10 @@
         :class="{textActive:dataActive==true, flexActive:dataActive==false}"
         @click="allRecords"
       >全部</div>
-      <div class="newsStyle-border" 
+      <!-- <div class="newsStyle-border" 
         :class="{flexActive:dataActive==false}"
         @click="getStatistic"
-      >统计</div>
+      >统计</div> -->
       <div :class="{textActive:dataActive==false}" @click="dataPopup" v-text="checkDate"></div>
     </div>
     <div>名片信息： {{addListNum}}条</div>

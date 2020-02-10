@@ -1,15 +1,8 @@
 // 导入需要的组件(按需引入elementUI)
 import {
-  Drawer,
-  RadioGroup,
   Loading,
-  CollapseItem,
-  Radio,
-  Collapse,
-  backtop,
   Icon,
   Image,
-  Rate,
   Tabs,
   TabPane,
   InfiniteScroll,
@@ -24,16 +17,9 @@ import {
 
 const element = {
   install: function (Vue) {
-    Vue.use(Drawer)
-      .use(RadioGroup)
-      .use(Loading)
-      .use(CollapseItem)
-      .use(Radio)
-      .use(Collapse)
-      .use(backtop)
+    Vue.use(Loading)
       .use(Icon)
       .use(Image)
-      .use(Rate)
       .use(Tabs)
       .use(TabPane)
       .use(InfiniteScroll)
